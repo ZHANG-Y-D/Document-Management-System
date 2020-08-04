@@ -84,5 +84,5 @@ local.properties
 .classpath
 .project
 
-# For web applications
-WebContent/
+
+
