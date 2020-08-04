@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -20,7 +22,9 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.projects.beans.Folder;
+import it.polimi.tiw.projects.beans.SubFolder;
 import it.polimi.tiw.projects.dao.FolderDAO;
+import it.polimi.tiw.projects.dao.SubFolderDAO;
 
 @WebServlet("/GetFoldersAndSubFolders")
 public class GetFoldersAndSubFolders extends HttpServlet{
@@ -60,13 +64,23 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		FolderDAO fDao = new FolderDAO(connection);
 		List<Folder> folders;
+		Map <Integer, List<SubFolder>> folderAndSubFolders = new HashMap <Integer, List<SubFolder>>();
+		SubFolderDAO sfDao = new SubFolderDAO(connection);
+		List<SubFolder> subfolders;
+		
 		
 		try {
 			folders = fDao.findAllFolders();
+			
+			for(Folder f: folders){
+				subfolders = sfDao.findSubfoldersByFolderId(f.getId());
+				folderAndSubFolders.put(f.getId(),subfolders);
+			}
 			String path = "home.html";
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 			ctx.setVariable("folders", folders);
+			ctx.setVariable("fsubfolders", folderAndSubFolders);
 			templateEngine.process(path, ctx, res.getWriter());
 			
 		} catch (SQLException e) {

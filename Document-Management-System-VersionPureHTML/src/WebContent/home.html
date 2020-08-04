@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Messages application</title>
+<title>Documents management</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
 	<h1>Welcome to the documents management</h1>
-	<table border="1">
-		<thead>
-			<tr><th>Topic Name</th></tr>
-		</thead>
-		<tbody >
-			<tr th:each="folder : ${folders}" >
-				<td th:text="${folder.name}">Onions</td>
-			</tr>
-			
-		</tbody>
-	</table>
+	
+	<div th:each="folder : ${folders}">
+		<span th:text= ${folder.name}>folder</span>
+			<ul th:each="subfolder:${fsubfolders.get(folder.id)}" >
+				<li th:text= ${subfolder.name}></li>
+		</ul>
+				
+	</div>
 </body>
 </html>
