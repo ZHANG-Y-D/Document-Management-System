@@ -11,7 +11,9 @@
                 <p th:text= ${subfolder.name}> subFolder</p>
                         <ul th:each="document : ${documents}" >
 							 <li> <span th:text= ${document.name}>document</span> 
-							      <a th:href="@{/GetFoldersAndSubFolders(documentid=${document.id})}"> >sposta </a></li>
+							 	  <a th:href="@{/GetDetails(documentid=${document.id})}"> >accedi </a>
+							      <a th:href="@{/GetFoldersAndSubFolders(documentid=${document.id})}">   >sposta </a>
+							 </li>
 					     
 					    </ul>
                                 

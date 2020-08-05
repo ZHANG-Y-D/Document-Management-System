@@ -64,11 +64,11 @@ public class GetListChoices extends HttpServlet{
 	
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String id = req.getParameter("documentid");
-		
-		if (id != null) {
-			int documentId = Integer.parseInt(id);
-			DocumentDAO dDao = new DocumentDAO(connection);
+//		String id = req.getParameter("documentid");
+//		
+//		if (id != null) {
+//			int documentId = Integer.parseInt(id);
+//			DocumentDAO dDao = new DocumentDAO(connection);
 			
 
 			FolderDAO fDao = new FolderDAO(connection);
@@ -81,7 +81,7 @@ public class GetListChoices extends HttpServlet{
 			try {
 				
 				
-				Document d = dDao.findDocumentByID(documentId);
+			//	Document d = dDao.findDocumentByID(documentId);
 				
 				folders = fDao.findAllFolders();
 				
@@ -95,7 +95,7 @@ public class GetListChoices extends HttpServlet{
 				ServletContext servletContext = getServletContext();
 				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 				
-				ctx.setVariable("document", d);
+				//ctx.setVariable("document", d);
 				ctx.setVariable("folders", folders);
 				ctx.setVariable("fsubfolders", folderAndSubFolders);
 				templateEngine.process(path, ctx, res.getWriter());
@@ -105,9 +105,9 @@ public class GetListChoices extends HttpServlet{
          }	
 			
 			
-		} else {
-			res.sendError(505, "Bad topic ID");
-		}
+//		} else {
+//			res.sendError(505, "Bad topic ID");
+//		}
 		
 		
 		

@@ -10,12 +10,13 @@
         <div th:each="folder : ${folders}">
                 <p th:text= ${folder.name}>folder</p>
                         <ul th:each="subfolder:${fsubfolders.get(folder.id)}"  >
-						
-					         <li th:if="${subfolder.id != document.subfolderid}"><a href="documents.html"
-					         	th:href="@{/GetChoices(subFolderid=${subfolder.id}), documentid = ${document.id}) }"><span th:text= ${subfolder.name}> subFolder</span>
-					         	</a>
-					         </li>
-					         <li th:unless = "${subfolder.id != document.subfolderid}"><span th:text= ${subfolder.name}> subFolder</span></li>
+						     <li th:if="${subfolder.id == document.subfolderid}"><span th:text= ${subfolder.name}> subFolder</span></li>
+					         <li th:unless="${subfolder.id == document.subfolderid}">
+					         <a th:href="@{/GetChoices(subFolderid=${subfolder.id}, documentid = ${document.id})}">
+					         <span th:text= ${subfolder.name}> subFolder</span>
+					         </a></li>
+					         
+					         
 	                        
 					    </ul>
                                 

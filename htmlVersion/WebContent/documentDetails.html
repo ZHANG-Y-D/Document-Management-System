@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Document Details</title>
+<title>Document details</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-        <h1>Document page</h1>
-        
-       
-                
-                                
-      
+        <h1>Document's details</h1>
+        
+       		
+                <p th:text= ${document.name}> document</p>
+                <p th:text= ${document.date}> document</p>
+                <p th:text= ${document.summary}> document</p> 
+                <p th:text= ${document.type}> document</p> 
+						 
+					     
+					     
 </body>
 </html>
