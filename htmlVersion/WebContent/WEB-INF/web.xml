@@ -3,7 +3,7 @@
   <display-name>htmlVersion</display-name>
   <context-param>
     <param-name>dbUrl</param-name>
-    <param-value>jdbc:mysql://localhost:3306/db_gestione_documenti</param-value>
+    <param-value>jdbc:mysql://localhost:3306/db_gestione_documenti?serverTimezone=UTC</param-value>
   </context-param>
   <context-param>
     <param-name>dbUser</param-name>
