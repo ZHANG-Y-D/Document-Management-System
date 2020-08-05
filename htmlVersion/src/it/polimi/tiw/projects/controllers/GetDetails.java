@@ -65,30 +65,30 @@ public class GetDetails extends HttpServlet{
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		
-//		String id = req.getParameter("documentId");
-//		if (id != null) {
-//			int documentId = 0;
-//			try {
-//				documentId = Integer.parseInt(id);
-//			} catch (NumberFormatException e) {
-//				res.sendError(505, "Bad number format");
-//			}
-//			DocumentDAO dDao = new DocumentDAO(connection);
-//			List<Document> documents;
-//			try {
-//				documents = dDao.findDocumentsBySubFolderID(documentId);
-//				String path = "documents.html";
-//				ServletContext servletContext = getServletContext();
-//				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
-//				ctx.setVariable("documents", documents);
-//				templateEngine.process(path, ctx, res.getWriter());
-//				
-//			} catch ( SQLException e ) {
-//				res.sendError(500, "Database access failed");
-//			}
-//		} else {
-//			res.sendError(505, "Bad topic ID");
-//		}
+		String id = req.getParameter("documentid");
+		if (id != null) {
+			int documentid = 0;
+			try {
+				documentid = Integer.parseInt(id);
+			} catch (NumberFormatException e) {
+				res.sendError(505, "Bad number format");
+			}
+			DocumentDAO dDao = new DocumentDAO(connection);
+			Document document;
+			try {
+				document = dDao.findDocumentByID(documentid);
+				String path = "documentDetails.html";
+				ServletContext servletContext = getServletContext();
+				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+				ctx.setVariable("document", document);
+				templateEngine.process(path, ctx, res.getWriter());
+				
+			} catch ( SQLException e ) {
+				res.sendError(500, "Database access failed");
+			}
+		} else {
+			res.sendError(505, "Bad topic ID");
+		}
 		
 	}
 	
