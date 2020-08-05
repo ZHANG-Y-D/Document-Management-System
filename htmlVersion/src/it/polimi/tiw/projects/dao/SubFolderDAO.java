@@ -34,7 +34,7 @@ public class SubFolderDAO {
 				sf.setId(result.getInt("idsubfolder"));
 				sf.setName(result.getString("name"));
 				sf.setDate(result.getDate("date"));
-				sf.setFolderId(result.getInt("idfolder"));
+				sf.setFolderId(result.getInt("idFolder"));
 				
 				sfolders.add(sf);
 			}
@@ -55,6 +55,44 @@ public class SubFolderDAO {
 		}
 		
 		return sfolders;
+	}
+	
+	public SubFolder findSubFolderById(int sfolderId) throws SQLException{
+		
+		SubFolder sfolder = new SubFolder();
+		String query = "SELECT * FROM db_gestione_documenti.subfolder where idsubfolder = ?";
+		ResultSet result = null;
+		PreparedStatement pstatement = null;
+		
+		try {
+			pstatement = con.prepareStatement(query);
+			pstatement.setInt(1, sfolderId);
+			result = pstatement.executeQuery();
+			while (result.next()) {
+				SubFolder sf = new SubFolder();
+				sf.setId(result.getInt("idsubfolder"));
+				sf.setName(result.getString("name"));
+				sf.setDate(result.getDate("date"));
+				sf.setFolderId(result.getInt("idFolder"));
+				
+			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
+
+		} finally {
+			try {
+				result.close();
+			} catch (Exception e1) {
+				throw new SQLException("Cannot close result");
+			}
+			try {
+				pstatement.close();
+			} catch (Exception e1) {
+				throw new SQLException("Cannot close statement");
+			}
+		}
+		
+		return sfolder;
 	}
 
 }

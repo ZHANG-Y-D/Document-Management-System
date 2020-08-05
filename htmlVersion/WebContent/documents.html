@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Documents</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+        <h1>Documents page</h1>
+        
+       
+                <p >subFolder</p>
+                        <ul th:each="document : ${documents}" >
+					         <li th:text= ${document.name}>document <a>>accedi</a> <a>>sposta</a></li>
+					    </ul>
+                                
+      
+</body>
+</html>
