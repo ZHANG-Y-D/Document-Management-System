@@ -5,12 +5,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-        <h1>Documents page</h1>
+        <h1>Document page</h1>
         
        
-                <p >subFolder</p>
+                <p th:text= ${subfolder.name}> subFolder</p>
                         <ul th:each="document : ${documents}" >
-					         <li th:text= ${document.name}>document <a>>accedi</a> <a>>sposta</a></li>
+							 <li><span th:text= ${document.name}> document </span>
+							 </li>
+					     
 					    </ul>
                                 
       

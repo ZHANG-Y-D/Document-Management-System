@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -22,19 +20,18 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.projects.beans.Document;
-import it.polimi.tiw.projects.beans.Folder;
 import it.polimi.tiw.projects.beans.SubFolder;
 import it.polimi.tiw.projects.dao.DocumentDAO;
-import it.polimi.tiw.projects.dao.FolderDAO;
 import it.polimi.tiw.projects.dao.SubFolderDAO;
 
-@WebServlet("/GetFoldersAndSubFolders")
-public class GetFoldersAndSubFolders extends HttpServlet{
+@WebServlet("/GetChoices")
+public class GetChoices extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
 	
-	public GetFoldersAndSubFolders() {
+	public GetChoices() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -62,57 +59,49 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 	}
 	
 	
-	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		FolderDAO fDao = new FolderDAO(connection);
-		List<Folder> folders;
-		Map <Integer, List<SubFolder>> folderAndSubFolders = new HashMap <Integer, List<SubFolder>>();
-		SubFolderDAO sfDao = new SubFolderDAO(connection);
-		List<SubFolder> subfolders;
-		
-		
-		try {
-			folders = fDao.findAllFolders();
-			
-			for(Folder f: folders){
-				subfolders = sfDao.findSubfoldersByFolderId(f.getId());
-				folderAndSubFolders.put(f.getId(),subfolders);
+		String id = req.getParameter("subFolderid");
+		String dId = req.getParameter("documentid");
+		if (id != null) {
+			int sfolderId = 0;
+			int documentId = 0;
+			try {
+				sfolderId = Integer.parseInt(id);
+				documentId = Integer.parseInt(dId);
+			} catch (NumberFormatException e) {
+				res.sendError(505, "Bad number format");
 			}
-			//String path = "home.html";
-			String path;
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
-			
-			String id = req.getParameter("documentid");
-			
-			if(id == null) path = "home.html";
-			else {
-				int documentId = Integer.parseInt(id);
-				DocumentDAO dDao = new DocumentDAO(connection);
-				Document d = dDao.findDocumentByID(documentId);
-				ctx.setVariable("document", d);
-				 path = "choices.html";
-			}
-			
-			ctx.setVariable("folders", folders);
-			ctx.setVariable("fsubfolders", folderAndSubFolders);
-			templateEngine.process(path, ctx, res.getWriter());
-			
-		} catch (SQLException e) {
-					res.sendError(500, "Database access failed");
-		}
+			DocumentDAO dDao = new DocumentDAO(connection);
+			List<Document> documents;
+			SubFolderDAO fDao = new SubFolderDAO(connection);
 		
-	}
-	
-	public void destroy() {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException sqle) {
-		}
-	}
+			try {
+			
+				dDao.moveDocument(sfolderId, documentId);
+				
+				SubFolder subFolder = fDao.findSubFolderById(sfolderId );
+				documents = dDao.findDocumentsBySubFolderID(sfolderId);
+				String path = "documents.html";
+				ServletContext servletContext = getServletContext();
+				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+				ctx.setVariable("documents", documents);
+				ctx.setVariable("subfolder", subFolder);
+				templateEngine.process(path, ctx, res.getWriter());
 
+			} catch (
+
+			SQLException e) {
+				res.sendError(500, "Database access failed");
+			}
+		} else {
+			res.sendError(505, "Bad topic ID");
+		}
+	}
 	
 	
+	
+	
+	
+	
+
 }
