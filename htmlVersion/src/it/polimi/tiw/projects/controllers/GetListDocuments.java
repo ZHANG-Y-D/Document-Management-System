@@ -70,15 +70,15 @@ public class GetListDocuments extends HttpServlet{
 			}
 			DocumentDAO dDao = new DocumentDAO(connection);
 			List<Document> documents;
-			//SubFolderDAO fDao = new SubFolderDAO(connection);
+			SubFolderDAO fDao = new SubFolderDAO(connection);
 			try {
-				//SubFolder subFolder = fDao.findSubFolderById(sfolderId );
+				SubFolder subFolder = fDao.findSubFolderById(sfolderId );
 				documents = dDao.findDocumentsBySubFolderID(sfolderId);
 				String path = "documents.html";
 				ServletContext servletContext = getServletContext();
 				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 				ctx.setVariable("documents", documents);
-				//ctx.setVariable("subFolder", subFolder);
+				ctx.setVariable("subfolder", subFolder);
 				templateEngine.process(path, ctx, res.getWriter());
 
 			} catch (

@@ -28,13 +28,13 @@ import it.polimi.tiw.projects.dao.DocumentDAO;
 import it.polimi.tiw.projects.dao.FolderDAO;
 import it.polimi.tiw.projects.dao.SubFolderDAO;
 
-@WebServlet("/GetFoldersAndSubFolders")
-public class GetFoldersAndSubFolders extends HttpServlet{
+@WebServlet("/GetListChoices")
+public class GetListChoices extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
 	
-	public GetFoldersAndSubFolders() {
+	public GetListChoices() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -47,6 +47,7 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 		this.templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
 		try {
+			
 			String driver = servletContext.getInitParameter("dbDriver");
 			String url = servletContext.getInitParameter("dbUrl");
 			String user = servletContext.getInitParameter("dbUser");
@@ -63,43 +64,54 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 	
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		FolderDAO fDao = new FolderDAO(connection);
-		List<Folder> folders;
-		Map <Integer, List<SubFolder>> folderAndSubFolders = new HashMap <Integer, List<SubFolder>>();
-		SubFolderDAO sfDao = new SubFolderDAO(connection);
-		List<SubFolder> subfolders;
+		String id = req.getParameter("documentid");
 		
-		
-		try {
-			folders = fDao.findAllFolders();
+		if (id != null) {
+			int documentId = Integer.parseInt(id);
+			DocumentDAO dDao = new DocumentDAO(connection);
 			
-			for(Folder f: folders){
-				subfolders = sfDao.findSubfoldersByFolderId(f.getId());
-				folderAndSubFolders.put(f.getId(),subfolders);
-			}
-			//String path = "home.html";
-			String path;
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+
+			FolderDAO fDao = new FolderDAO(connection);
+			List<Folder> folders;
+			Map <Integer, List<SubFolder>> folderAndSubFolders = new HashMap <Integer, List<SubFolder>>();
+			SubFolderDAO sfDao = new SubFolderDAO(connection);
+			List<SubFolder> subfolders;
 			
-			String id = req.getParameter("documentid");
 			
-			if(id == null) path = "home.html";
-			else {
-				int documentId = Integer.parseInt(id);
-				DocumentDAO dDao = new DocumentDAO(connection);
+			try {
+				
+				
 				Document d = dDao.findDocumentByID(documentId);
+				
+				folders = fDao.findAllFolders();
+				
+				for(Folder f: folders){
+					subfolders = sfDao.findSubfoldersByFolderId(f.getId());
+					folderAndSubFolders.put(f.getId(),subfolders);
+				}
+			    String path = "choices.html";
+			
+			    
+				ServletContext servletContext = getServletContext();
+				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+				
 				ctx.setVariable("document", d);
-				 path = "choices.html";
-			}
+				ctx.setVariable("folders", folders);
+				ctx.setVariable("fsubfolders", folderAndSubFolders);
+				templateEngine.process(path, ctx, res.getWriter());
+				
+		 } catch (SQLException e) {
+			res.sendError(500, "Database access failed");
+         }	
 			
-			ctx.setVariable("folders", folders);
-			ctx.setVariable("fsubfolders", folderAndSubFolders);
-			templateEngine.process(path, ctx, res.getWriter());
 			
-		} catch (SQLException e) {
-					res.sendError(500, "Database access failed");
+		} else {
+			res.sendError(505, "Bad topic ID");
 		}
+		
+		
+		
+			
 		
 	}
 	
@@ -115,3 +127,4 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 	
 	
 }
+

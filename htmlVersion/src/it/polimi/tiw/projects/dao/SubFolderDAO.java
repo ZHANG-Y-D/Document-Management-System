@@ -59,7 +59,7 @@ public class SubFolderDAO {
 	
 	public SubFolder findSubFolderById(int sfolderId) throws SQLException{
 		
-		SubFolder sfolder = new SubFolder();
+		SubFolder sf= new SubFolder();
 		String query = "SELECT * FROM db_gestione_documenti.subfolder where idsubfolder = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
@@ -69,7 +69,7 @@ public class SubFolderDAO {
 			pstatement.setInt(1, sfolderId);
 			result = pstatement.executeQuery();
 			while (result.next()) {
-				SubFolder sf = new SubFolder();
+	
 				sf.setId(result.getInt("idsubfolder"));
 				sf.setName(result.getString("name"));
 				sf.setDate(result.getDate("date"));
@@ -92,7 +92,7 @@ public class SubFolderDAO {
 			}
 		}
 		
-		return sfolder;
+		return sf;
 	}
 
 }
