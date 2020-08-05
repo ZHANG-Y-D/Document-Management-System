@@ -21,18 +21,20 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.projects.beans.Document;
 import it.polimi.tiw.projects.beans.Folder;
 import it.polimi.tiw.projects.beans.SubFolder;
+import it.polimi.tiw.projects.dao.DocumentDAO;
 import it.polimi.tiw.projects.dao.FolderDAO;
 import it.polimi.tiw.projects.dao.SubFolderDAO;
 
-@WebServlet("/GetFoldersAndSubFolders")
-public class GetFoldersAndSubFolders extends HttpServlet{
+@WebServlet("/GetDetails")
+public class GetDetails extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
 	
-	public GetFoldersAndSubFolders() {
+	public GetDetails() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -45,6 +47,7 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 		this.templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
 		try {
+			
 			String driver = servletContext.getInitParameter("dbDriver");
 			String url = servletContext.getInitParameter("dbUrl");
 			String user = servletContext.getInitParameter("dbUser");
@@ -61,42 +64,33 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 	
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		FolderDAO fDao = new FolderDAO(connection);
-		List<Folder> folders;
-		Map <Integer, List<SubFolder>> folderAndSubFolders = new HashMap <Integer, List<SubFolder>>();
-		SubFolderDAO sfDao = new SubFolderDAO(connection);
-		List<SubFolder> subfolders;
 		
-		
-		try {
-			folders = fDao.findAllFolders();
-			
-			for(Folder f: folders){
-				subfolders = sfDao.findSubfoldersByFolderId(f.getId());
-				folderAndSubFolders.put(f.getId(),subfolders);
-			}
-			String path = "home.html";
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
-			ctx.setVariable("folders", folders);
-			ctx.setVariable("fsubfolders", folderAndSubFolders);
-			templateEngine.process(path, ctx, res.getWriter());
-			
-		} catch (SQLException e) {
-					res.sendError(500, "Database access failed");
-		}
+//		String id = req.getParameter("documentId");
+//		if (id != null) {
+//			int documentId = 0;
+//			try {
+//				documentId = Integer.parseInt(id);
+//			} catch (NumberFormatException e) {
+//				res.sendError(505, "Bad number format");
+//			}
+//			DocumentDAO dDao = new DocumentDAO(connection);
+//			List<Document> documents;
+//			try {
+//				documents = dDao.findDocumentsBySubFolderID(documentId);
+//				String path = "documents.html";
+//				ServletContext servletContext = getServletContext();
+//				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+//				ctx.setVariable("documents", documents);
+//				templateEngine.process(path, ctx, res.getWriter());
+//				
+//			} catch ( SQLException e ) {
+//				res.sendError(500, "Database access failed");
+//			}
+//		} else {
+//			res.sendError(505, "Bad topic ID");
+//		}
 		
 	}
-	
-	public void destroy() {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException sqle) {
-		}
-	}
-
 	
 	
 }
