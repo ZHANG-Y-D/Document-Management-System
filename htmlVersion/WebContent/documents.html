@@ -5,13 +5,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-        <h1>Document page</h1>
+        <h1>Document's page</h1>
         
        
                 <p th:text= ${subfolder.name}> subFolder</p>
                         <ul th:each="document : ${documents}" >
-							 <li><span th:text= ${document.name}> document </span>
-							 </li>
+							 <li> <span th:text= ${document.name}>document</span> 
+							      <a th:href="@{/GetFoldersAndSubFolders(documentid=${document.id})}"> >sposta </a></li>
 					     
 					    </ul>
                                 
