@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Documents management</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+        <h1>Welcome to the documents' management</h1>
+        
+        <div th:each="folder : ${folders}">
+                <p th:text= ${folder.name}>folder</p>
+                        <ul th:each="subfolder:${fsubfolders.get(folder.id)}" >
+					         <li ><a href="documents.html"
+					         	th:href="@{/GetListDocuments(subFolderid=${subfolder.id})}"><span th:text= ${subfolder.name}> subFolder</span></a></li>
+					    </ul>
+                                
+        </div>
+</body>
+</html>
