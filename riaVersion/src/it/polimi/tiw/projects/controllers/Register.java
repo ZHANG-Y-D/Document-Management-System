@@ -18,13 +18,13 @@ import it.polimi.tiw.projects.beans.User;
 import it.polimi.tiw.projects.dao.UserDAO;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 
-@WebServlet("/CheckLogin")
+@WebServlet("/Register")
 @MultipartConfig
-public class CheckLogin extends HttpServlet {
+public class Register extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 
-	public CheckLogin() {
+	public Register() {
 		super();
 	}
 
@@ -37,35 +37,52 @@ public class CheckLogin extends HttpServlet {
 		// obtain and escape params
 		String usrn = null;
 		String pwd = null;
+		String confirmpwd = null;
+		String email = null;
+		
 		usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
 		pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
-		if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty() ) {
+		confirmpwd = StringEscapeUtils.escapeJava(request.getParameter("confirmpwd"));
+		email = StringEscapeUtils.escapeJava(request.getParameter("email"));
+		
+		if (usrn == null || pwd == null || confirmpwd == null || email == null
+				|| usrn.isEmpty() || pwd.isEmpty() || confirmpwd.isEmpty() || email.isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().println("Credentials must be not null");
 			return;
 		}
-		// query db to authenticate for user
-		UserDAO userDao = new UserDAO(connection);
-		User user = null;
-		try {
-			user = userDao.checkCredentials(usrn, pwd);
-		} catch (SQLException e) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			response.getWriter().println("Internal server error, retry later");
+		
+		if (!pwd.equals(confirmpwd)) {
+			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+			response.getWriter().println("Password and confirm password must be the same");
 			return;
 		}
-
-		// If the user exists, add info to the session and go to home page, otherwise
-		// return an error status code and message
-		if (user == null) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().println("Incorrect credentials");
-		} else {
-			request.getSession().setAttribute("user", user);
-			response.setStatus(HttpServletResponse.SC_OK);
-			//response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().println(usrn);
+		
+		// insert into database
+		UserDAO userDao = new UserDAO(connection);
+		String resultString = null;
+		try {
+			resultString = userDao.insertForRegister(usrn, pwd, email);
+			if (resultString.contains("OK")) {
+				response.setStatus(HttpServletResponse.SC_OK);
+			}else {
+				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				if (resultString.contains("Duplicate")) { 
+					// Duplicate entry. The user name has been registered.
+					response.getWriter().println("The user name has been registered.");
+				}else if(resultString.contains("mailchck")){
+					// Check constraint 'mailchck' is violated,
+					// So the syntactic of the email address is not valid.
+					response.getWriter().println("The syntactic of the email address is not valid");
+				}else {
+					response.getWriter().println(resultString);
+				}
+			}
+		} catch (SQLException e) {
+			
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println("Internal server error, retry later. "+e.getMessage());
+			return;
 		}
 	}
 

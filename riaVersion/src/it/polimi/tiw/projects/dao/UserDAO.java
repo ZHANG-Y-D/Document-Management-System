@@ -33,4 +33,20 @@ public class UserDAO {
 			}
 		}
 	}
+	
+	public String insertForRegister(String usrn, String pwd, String email) throws SQLException {
+		String query = "INSERT INTO user(id,username,password,email) VALUES(NULL,?,?,?);";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setString(1, usrn);
+			pstatement.setString(2, pwd);
+			pstatement.setString(3, email);
+			pstatement.executeUpdate();
+			return "OK";
+		} catch (SQLException e) {
+			return e.getMessage();
+		}
+	}
+	
+	
+	
 }
