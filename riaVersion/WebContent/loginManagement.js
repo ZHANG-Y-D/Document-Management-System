@@ -13,7 +13,7 @@
             var message = req.responseText;
             switch (req.status) {
               case 200:
-            	sessionStorage.setItem('username', message);
+                sessionStorage.setItem('username', message);
                 window.location.href = "home.html";
                 break;
               case 400: // bad request
@@ -23,17 +23,17 @@
                   document.getElementById("errormessage").textContent = message;
                   break;
               case 500: // server error
-            	document.getElementById("errormessage").textContent = message;
+                document.getElementById("errormessage").textContent = message;
                 break;
             }
           }
         }
       );
     } else {
-    	 form.reportValidity();
+         form.reportValidity();
     }
   });
 
-   document.getElementById("registerbutton").addEventListener('click', (e) => {window.location.href = "register.html";});
+  document.getElementById("registerbutton").addEventListener('click', (e) => {window.location.href = "register.html";});
 
 })();

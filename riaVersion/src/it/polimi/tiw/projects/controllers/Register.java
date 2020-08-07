@@ -54,7 +54,7 @@ public class Register extends HttpServlet {
 		
 		if (!pwd.equals(confirmpwd)) {
 			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-			response.getWriter().println("Password and confirm password must be the same");
+			response.getWriter().println("Password and confirm password must be the same.");
 			return;
 		}
 		
@@ -73,7 +73,7 @@ public class Register extends HttpServlet {
 				}else if(resultString.contains("mailchck")){
 					// Check constraint 'mailchck' is violated,
 					// So the syntactic of the email address is not valid.
-					response.getWriter().println("The syntactic of the email address is not valid");
+					response.getWriter().println("The syntactic of the email address is not valid.");
 				}else {
 					response.getWriter().println(resultString);
 				}
