@@ -8,12 +8,12 @@
         <h1>Stai spostando il documento X dalla sottocartella Y. Scegli la sottocartella di destinazione</h1>
         
         <div th:each="folder : ${folders}">
-                <p th:text= ${folder.name}>folder</p>
-                        <ul th:each="subfolder:${fsubfolders.get(folder.id)}"  >
-						     <li th:if="${subfolder.id == document.subfolderid}"><span th:text= ${subfolder.name}> subFolder</span></li>
-					         <li th:unless="${subfolder.id == document.subfolderid}">
-					         <a th:href="@{/GetChoices(subFolderid=${subfolder.id}, documentid = ${document.id})}">
-					         <span th:text= ${subfolder.name}> subFolder</span>
+                <p th:text= ${folder.FolderName}>folder</p>
+                        <ul th:each="subfolder:${fsubfolders.get(folder)}"  >
+						     <li th:if="${subfolder.subFolderName == document.subfolderName && folder.FolderName == document.FolderName}"><span th:text= ${subfolder.SubFolderName}> subFolder</span></li>
+					         <li th:unless="${subfolder.subFolderName == document.subfolderName && folder.FolderName == document.FolderName}">
+					         <a th:href="@{/GetChoices(FromDocumentName=${document.DocumentName},FromSubFolderName=${document.SubFolderName},FromFolderName=${document.FolderName},ToSubFolderName=${subfolder.subFolderName},ToFolderName=${folder.FolderName},)}">
+					         <span th:text= ${subfolder.SubFolderName}> subFolder</span>
 					         </a></li>
 					         
 					         

@@ -1,17 +1,35 @@
 package it.polimi.tiw.projects.beans;
 
+import java.sql.Date;
 
 public class SubFolder extends Folder {
 
-	private int folderId;
+	private String subFolderName;
+	private String folderName;
+	private Date date;
 	
-	public void setFolderId(int i) {
-		folderId = i;
+	public String getSubFolderName() {
+		return subFolderName;
+	}
+
+	public void setSubFolderName(String a) {
+		subFolderName = a;
 	}
 	
-	public int getFolderId() {
-		return folderId;
+	public String getFolderName() {
+		return folderName;
+	}
+
+	public void setFolderName(String a) {
+		folderName = a;
 	}
 	
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
 }

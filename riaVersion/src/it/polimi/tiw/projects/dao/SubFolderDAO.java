@@ -21,7 +21,7 @@ public class SubFolderDAO {
 	public List<SubFolder> findSubfoldersByFolderName (String name) throws SQLException{
 		
 		List<SubFolder> sfolders = new ArrayList<SubFolder>();
-		String query = "SELECT * FROM db.subfolder where namefolder = ?";
+		String query = "SELECT * FROM subfolder WHERE namefolder = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		
@@ -60,7 +60,7 @@ public class SubFolderDAO {
 	public SubFolder findSubFolderById(int sfolderId) throws SQLException{
 		
 		SubFolder sf= new SubFolder();
-		String query = "SELECT * FROM db_gestione_documenti.subfolder where idsubfolder = ?";
+		String query = "SELECT * FROM subfolder WHERE idsubfolder = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		

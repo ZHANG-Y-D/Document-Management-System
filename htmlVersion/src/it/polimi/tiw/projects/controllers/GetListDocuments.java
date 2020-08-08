@@ -60,21 +60,14 @@ public class GetListDocuments extends HttpServlet{
 	
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String id = req.getParameter("subFolderid");
-		//String subfolderName = req.getParameter("subFolderName");
-		if (id != null) {
-			int sfolderId = 0;
-			try {
-				sfolderId = Integer.parseInt(id);
-			} catch (NumberFormatException e) {
-				res.sendError(505, "Bad number format");
-			}
+		String subfolderName = req.getParameter("SubFolderName");
+		String folderName = req.getParameter("FolderName");
+		if (subfolderName != null) {
 			DocumentDAO dDao = new DocumentDAO(connection);
-			List<Document> documents;
 			SubFolderDAO fDao = new SubFolderDAO(connection);
 			try {
-				SubFolder subfolder = fDao.findSubFolderById(sfolderId );
-				documents = dDao.findDocumentsBySubFolderID(sfolderId);
+				SubFolder subfolder = fDao.findSubFolderBySubFoldAndFolderName(subfolderName,folderName);
+				List<Document> documents = dDao.findAllDocumentsBySubFolderAndFolderName(subfolderName,folderName);
 				String path = "documents.html";
 				ServletContext servletContext = getServletContext();
 				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
@@ -83,7 +76,6 @@ public class GetListDocuments extends HttpServlet{
 				templateEngine.process(path, ctx, res.getWriter());
 
 			} catch (
-
 			SQLException e) {
 				res.sendError(500, "Database access failed");
 			}

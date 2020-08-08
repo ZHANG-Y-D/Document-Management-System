@@ -8,10 +8,10 @@
         <h1>Welcome to the documents' management</h1>
         
         <div th:each="folder : ${folders}">
-                <p th:text= ${folder.name}>folder</p>
-                        <ul th:each="subfolder:${fsubfolders.get(folder.id)}" >
+                <p th:text= ${folder.FolderName}>folder</p>
+                        <ul th:each="subfolder:${fsubfolders.get(folder)}" >
 					         <li ><a href="documents.html"
-					         	th:href="@{/GetListDocuments(subFolderid=${subfolder.id})}"><span th:text= ${subfolder.name}> subFolder</span></a></li>
+					         	th:href="@{/GetListDocuments(SubFolderName=${subfolder.SubFolderName},FolderName=${subfolder.FolderName})}"><span th:text= ${subfolder.SubFolderName}> subFolder</span></a></li>
 					    </ul>
                                 
         </div>

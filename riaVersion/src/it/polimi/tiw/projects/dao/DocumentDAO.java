@@ -21,7 +21,7 @@ public class DocumentDAO {
 	public List<Document> findDocumentsBySubFolderID (int sfolderId) throws SQLException{
 		
 		List<Document> documents = new ArrayList<Document>();
-		String query = "SELECT * FROM db.document where idSubfolder = ?";
+		String query = "SELECT * FROM document WHERE idSubfolder = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		
@@ -60,7 +60,7 @@ public class DocumentDAO {
 	
 	public void moveDocument(int subfolderId, int documentId)  throws SQLException{
 		
-		String query = "UPDATE db_gestione_documenti.document set idSubfolder = ? WHERE iddocument = ?";
+		String query = "UPDATE document set idSubfolder = ? WHERE iddocument = ?";
 		PreparedStatement pstatement = null;
 		try {
 			pstatement = con.prepareStatement(query);
@@ -83,7 +83,7 @@ public class DocumentDAO {
 	public Document findDocumentByID (int Id) throws SQLException{
 		
 		Document d = new Document();
-		String query = "SELECT * FROM db_gestione_documenti.document where iddocument = ?";
+		String query = "SELECT * FROM document WHERE iddocument = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		

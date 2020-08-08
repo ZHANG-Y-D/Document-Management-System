@@ -4,21 +4,36 @@ import java.sql.Date;
 
 public class Document {
 	
-	private String name;
+	private String DocumentName;
+	private String subFolderName;
+	private String folderName;
 	private Date date;
-	private int id;
 	private String summary;
 	private String type;
-	private int subfolderid;
 	
 	
-	
-	public int getId() {
-		return id;
+	public String getDocumentName() {
+		return DocumentName;
 	}
 
-	public String getName() {
-		return name;
+	public void setDocumentName(String a) {
+		DocumentName = a;
+	}
+	
+	public String getSubFolderName() {
+		return subFolderName;
+	}
+
+	public void setSubFolderName(String a) {
+		subFolderName = a;
+	}
+	
+	public String getFolderName() {
+		return folderName;
+	}
+
+	public void setFolderName(String a) {
+		folderName = a;
 	}
 	
 	public Date getDate() {
@@ -33,26 +48,11 @@ public class Document {
 		return type;
 	}
 	
-	public int getSubFolderId() {
-		return subfolderid;
-	}
-
-	public void setId(int i) {
-		id = i;
-	}
-
-	public void setName(String un) {
-		name = un;
-	}
-	
 	
 	public void setDate(Date date) {
 		this.date = date;
 	}
 	
-	public void setSubFolderId(int id) {
-		subfolderid = id;
-	}
 	
 	public void setType (String t) {
 		type = t;

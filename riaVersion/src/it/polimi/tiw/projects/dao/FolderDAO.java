@@ -20,7 +20,7 @@ public class FolderDAO {
 	public List<Folder> findAllFolders() throws SQLException{
 		
 		List<Folder> folders = new ArrayList<Folder>();
-		String query = "SELECT * FROM db.folder";
+		String query = "SELECT * FROM folder";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		try {

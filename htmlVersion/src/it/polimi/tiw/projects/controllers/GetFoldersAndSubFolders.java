@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		FolderDAO fDao = new FolderDAO(connection);
 		List<Folder> folders;
-		Map <Integer, List<SubFolder>> folderAndSubFolders = new HashMap <Integer, List<SubFolder>>();
+		Map <Folder, List<SubFolder>> folderAndSubFolders = new HashMap <Folder, List<SubFolder>>();
 		SubFolderDAO sfDao = new SubFolderDAO(connection);
 		List<SubFolder> subfolders;
 		
@@ -74,22 +75,26 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 			folders = fDao.findAllFolders();
 			
 			for(Folder f: folders){
-				subfolders = sfDao.findSubfoldersByFolderId(f.getId());
-				folderAndSubFolders.put(f.getId(),subfolders);
+				subfolders = sfDao.findAllSubfoldersByFolderName(f.getFolderName());
+				folderAndSubFolders.put(f,subfolders);
 			}
 			//String path = "home.html";
 			String path;
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 			
-			String id = req.getParameter("documentid");
+			String documentName = req.getParameter("DocumentName");
+			String subFolderName = req.getParameter("SubFolderName");
+			String folderName = req.getParameter("FolderName");
 			
-			if(id == null) path = "home.html";
+			
+			if(documentName == null ||
+					subFolderName == null ||
+					folderName == null) path = "home.html";
 			else {
-				int documentId = Integer.parseInt(id);
 				DocumentDAO dDao = new DocumentDAO(connection);
-				Document d = dDao.findDocumentByID(documentId);
-				ctx.setVariable("document", d);
+				Document document = dDao.findDocument(documentName, subFolderName, folderName);
+				ctx.setVariable("document", document);
 				 path = "choices.html";
 			}
 			

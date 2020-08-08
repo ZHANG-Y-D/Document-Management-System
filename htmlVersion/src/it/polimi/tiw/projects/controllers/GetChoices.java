@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -60,27 +61,32 @@ public class GetChoices extends HttpServlet {
 	
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String id = req.getParameter("subFolderid");
-		String dId = req.getParameter("documentid");
-		if (id != null) {
-			int sfolderId = 0;
-			int documentId = 0;
-			try {
-				sfolderId = Integer.parseInt(id);
-				documentId = Integer.parseInt(dId);
-			} catch (NumberFormatException e) {
-				res.sendError(505, "Bad number format");
-			}
+		
+		String fromDocumentName = req.getParameter("FromDocumentName");
+		String fromSubFolderName = req.getParameter("FromSubFolderName");
+		String fromFolderName = req.getParameter("FromFolderName"); 
+		String toSubFolderName = req.getParameter("ToSubFolderName");
+		String toFolderName = req.getParameter("ToFolderName");
+		
+		if (fromDocumentName != null &&
+				fromSubFolderName != null &&
+						fromFolderName != null) {
 			DocumentDAO dDao = new DocumentDAO(connection);
-			List<Document> documents;
 			SubFolderDAO fDao = new SubFolderDAO(connection);
 		
 			try {
-			
-				dDao.moveDocument(sfolderId, documentId);
+				List<String> fromDocument = new ArrayList<String>();
+				List<String> toSubFolder = new ArrayList<String>();
 				
-				SubFolder subFolder = fDao.findSubFolderById(sfolderId );
-				documents = dDao.findDocumentsBySubFolderID(sfolderId);
+				fromDocument.add(fromDocumentName);
+				fromDocument.add(fromSubFolderName);
+				fromDocument.add(fromFolderName);
+				toSubFolder.add(toSubFolderName);
+				toSubFolder.add(toFolderName);
+				
+				dDao.moveDocument(fromDocument, toSubFolder);
+				SubFolder subFolder = fDao.findSubFolderBySubFoldAndFolderName(toSubFolderName, toFolderName);
+				List<Document> documents = dDao.findAllDocumentsBySubFolderAndFolderName(toSubFolderName, toFolderName);
 				String path = "documents.html";
 				ServletContext servletContext = getServletContext();
 				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
