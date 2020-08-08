@@ -38,7 +38,10 @@
   <filter-mapping> 
     <filter-name>LoginChecker</filter-name> 
     <url-pattern>/home.html</url-pattern>   
+    <!-- <url-pattern>/GetFoldersAndSubFolders</url-pattern>
     <url-pattern>/GetFoldersAndSubFolders</url-pattern>
+    <url-pattern>/GetFoldersAndSubFolders</url-pattern>
+    <url-pattern>/GetFoldersAndSubFolders</url-pattern> -->
     <url-pattern>/Logout</url-pattern>
     
  </filter-mapping>
