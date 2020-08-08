@@ -61,6 +61,7 @@ public class GetListDocuments extends HttpServlet{
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String id = req.getParameter("subFolderid");
+		//String subfolderName = req.getParameter("subFolderName");
 		if (id != null) {
 			int sfolderId = 0;
 			try {
@@ -72,13 +73,13 @@ public class GetListDocuments extends HttpServlet{
 			List<Document> documents;
 			SubFolderDAO fDao = new SubFolderDAO(connection);
 			try {
-				SubFolder subFolder = fDao.findSubFolderById(sfolderId );
+				SubFolder subfolder = fDao.findSubFolderById(sfolderId );
 				documents = dDao.findDocumentsBySubFolderID(sfolderId);
 				String path = "documents.html";
 				ServletContext servletContext = getServletContext();
 				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 				ctx.setVariable("documents", documents);
-				ctx.setVariable("subfolder", subFolder);
+				ctx.setVariable("subfolder", subfolder);
 				templateEngine.process(path, ctx, res.getWriter());
 
 			} catch (

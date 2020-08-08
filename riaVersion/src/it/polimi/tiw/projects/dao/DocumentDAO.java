@@ -21,7 +21,7 @@ public class DocumentDAO {
 	public List<Document> findDocumentsBySubFolderID (int sfolderId) throws SQLException{
 		
 		List<Document> documents = new ArrayList<Document>();
-		String query = "SELECT * FROM db_gestione_documenti.document where idSubfolder = ?";
+		String query = "SELECT * FROM db.document where idSubfolder = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +17,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import com.google.gson.Gson;
 
+import it.polimi.tiw.projects.utils.ConnectionHandler;
 import it.polimi.tiw.projects.beans.Document;
 import it.polimi.tiw.projects.beans.Folder;
 import it.polimi.tiw.projects.beans.SubFolder;
@@ -32,7 +31,6 @@ import it.polimi.tiw.projects.dao.SubFolderDAO;
 public class GetFoldersAndSubFolders extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 	
 	public GetFoldersAndSubFolders() {
 		super();
@@ -40,66 +38,43 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 	}
 	
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-		try {
-			String driver = servletContext.getInitParameter("dbDriver");
-			String url = servletContext.getInitParameter("dbUrl");
-			String user = servletContext.getInitParameter("dbUser");
-			String password = servletContext.getInitParameter("dbPassword");
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url, user, password);
-		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
-		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
-		}
+		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 	
 	
 	
-	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 		FolderDAO fDao = new FolderDAO(connection);
 		List<Folder> folders;
-		Map <Integer, List<SubFolder>> folderAndSubFolders = new HashMap <Integer, List<SubFolder>>();
+		List<ArrayList<SubFolder>> subfolders = new ArrayList<ArrayList<SubFolder>>();
 		SubFolderDAO sfDao = new SubFolderDAO(connection);
-		List<SubFolder> subfolders;
 		
 		
 		try {
+			
 			folders = fDao.findAllFolders();
 			
 			for(Folder f: folders){
-				subfolders = sfDao.findSubfoldersByFolderId(f.getId());
-				folderAndSubFolders.put(f.getId(),subfolders);
-			}
-			//String path = "home.html";
-			String path;
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
-			
-			String id = req.getParameter("documentid");
-			
-			if(id == null) path = "home.html";
-			else {
-				int documentId = Integer.parseInt(id);
-				DocumentDAO dDao = new DocumentDAO(connection);
-				Document d = dDao.findDocumentByID(documentId);
-				ctx.setVariable("document", d);
-				 path = "choices.html";
+				List<SubFolder> listSubFolder;
+				listSubFolder = sfDao.findSubfoldersByFolderName(f.getName());
+				subfolders.add((ArrayList<SubFolder>) listSubFolder);
 			}
 			
-			ctx.setVariable("folders", folders);
-			ctx.setVariable("fsubfolders", folderAndSubFolders);
-			templateEngine.process(path, ctx, res.getWriter());
+			
+			//String id = req.getParameter("documentid");
+			
 			
 		} catch (SQLException e) {
-					res.sendError(500, "Database access failed");
+			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println("Not possible to recover missions");
+			return;
 		}
+		
+		String json = new Gson().toJson(subfolders);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(json);
 		
 	}
 	

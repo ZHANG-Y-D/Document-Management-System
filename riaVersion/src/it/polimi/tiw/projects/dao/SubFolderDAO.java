@@ -18,23 +18,23 @@ public class SubFolderDAO {
 		this.con = connection;
 	}
 	
-	public List<SubFolder> findSubfoldersByFolderId (int folderId) throws SQLException{
+	public List<SubFolder> findSubfoldersByFolderName (String name) throws SQLException{
 		
 		List<SubFolder> sfolders = new ArrayList<SubFolder>();
-		String query = "SELECT * FROM db_gestione_documenti.subfolder where idfolder = ?";
+		String query = "SELECT * FROM db.subfolder where namefolder = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		
 		try {
 			pstatement = con.prepareStatement(query);
-			pstatement.setInt(1, folderId);
+			pstatement.setString(1,name);
 			result = pstatement.executeQuery();
 			while (result.next()) {
 				SubFolder sf = new SubFolder();
 				sf.setId(result.getInt("idsubfolder"));
 				sf.setName(result.getString("name"));
 				sf.setDate(result.getDate("date"));
-				sf.setFolderId(result.getInt("idFolder"));
+				sf.setFolderName(result.getString("namefolder"));
 				
 				sfolders.add(sf);
 			}
@@ -73,7 +73,7 @@ public class SubFolderDAO {
 				sf.setId(result.getInt("idsubfolder"));
 				sf.setName(result.getString("name"));
 				sf.setDate(result.getDate("date"));
-				sf.setFolderId(result.getInt("idFolder"));
+				sf.setFolderName(result.getString("namefolder"));
 				
 			}
 		} catch (SQLException e) {
