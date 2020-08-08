@@ -19,17 +19,18 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import com.google.gson.Gson;
 
 import it.polimi.tiw.projects.beans.Document;
 import it.polimi.tiw.projects.beans.SubFolder;
 import it.polimi.tiw.projects.dao.DocumentDAO;
 import it.polimi.tiw.projects.dao.SubFolderDAO;
+import it.polimi.tiw.projects.utils.ConnectionHandler;
 
 @WebServlet("/GetListDocuments")
 public class GetListDocuments extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 	
 	public GetListDocuments() {
 		super();
@@ -37,57 +38,45 @@ public class GetListDocuments extends HttpServlet{
 	}
 	
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-		try {
-			
-			String driver = servletContext.getInitParameter("dbDriver");
-			String url = servletContext.getInitParameter("dbUrl");
-			String user = servletContext.getInitParameter("dbUser");
-			String password = servletContext.getInitParameter("dbPassword");
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url, user, password);
-		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
-		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
-		}
+		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 	
 	
-	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String id = req.getParameter("subFolderid");
+	public void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+		String id = req.getParameter("subfolderid");
 		if (id != null) {
 			int sfolderId = 0;
 			try {
 				sfolderId = Integer.parseInt(id);
 			} catch (NumberFormatException e) {
-				res.sendError(505, "Bad number format");
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().println("Incorrect param values");
+				return;
 			}
+			
 			DocumentDAO dDao = new DocumentDAO(connection);
 			List<Document> documents;
-			SubFolderDAO fDao = new SubFolderDAO(connection);
+			//SubFolderDAO fDao = new SubFolderDAO(connection);
 			try {
-				SubFolder subFolder = fDao.findSubFolderById(sfolderId );
+				//SubFolder subFolder = fDao.findSubFolderById(sfolderId );
 				documents = dDao.findDocumentsBySubFolderID(sfolderId);
-				String path = "documents.html";
-				ServletContext servletContext = getServletContext();
-				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
-				ctx.setVariable("documents", documents);
-				ctx.setVariable("subfolder", subFolder);
-				templateEngine.process(path, ctx, res.getWriter());
-
-			} catch (
-
-			SQLException e) {
-				res.sendError(500, "Database access failed");
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().println("Not possible to recover missions");
+				return;
 			}
+			
+			String json = new Gson().toJson(documents);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(json);
+			
 		} else {
-			res.sendError(505, "Bad topic ID");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("505 Bad topic ID");
+			return;
 		}
 	}
 		

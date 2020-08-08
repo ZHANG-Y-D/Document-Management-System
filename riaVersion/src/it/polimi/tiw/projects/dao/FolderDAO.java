@@ -20,7 +20,7 @@ public class FolderDAO {
 	public List<Folder> findAllFolders() throws SQLException{
 		
 		List<Folder> folders = new ArrayList<Folder>();
-		String query = "SELECT * FROM db_gestione_documenti.folder";
+		String query = "SELECT * FROM db.folder";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		try {
@@ -28,7 +28,6 @@ public class FolderDAO {
 			result = pstatement.executeQuery();
 			while (result.next()) {
 				Folder f = new Folder();
-				f.setId(result.getInt("idfolder"));
 				f.setName(result.getString("name"));
 				f.setDate(result.getDate("date"));
 				folders.add(f);

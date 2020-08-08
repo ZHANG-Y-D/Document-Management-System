@@ -19,10 +19,10 @@
   </context-param>
   
   <welcome-file-list>
-    <welcome-file>loginPage.html</welcome-file>
+    <welcome-file>home.html</welcome-file>
   </welcome-file-list>
   
-  <filter> 
+   <filter> 
       <filter-name>LoginChecker</filter-name>
       <filter-class>it.polimi.tiw.projects.filters.LoginChecker</filter-class> 
  </filter> 
@@ -42,5 +42,7 @@
     <url-pattern>/Logout</url-pattern>
     
  </filter-mapping>
+  
+ 
  
 </web-app>

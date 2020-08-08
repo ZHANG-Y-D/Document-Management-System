@@ -3,14 +3,14 @@ package it.polimi.tiw.projects.beans;
 
 public class SubFolder extends Folder {
 
-	private int folderId;
+	private String folderName;
 	
-	public void setFolderId(int i) {
-		folderId = i;
+	public void setFolderName(String name) {
+		folderName = name;
 	}
 	
-	public int getFolderId() {
-		return folderId;
+	public String getFolderName() {
+		return folderName;
 	}
 	
 
