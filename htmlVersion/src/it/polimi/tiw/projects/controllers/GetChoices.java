@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -62,9 +63,17 @@ public class GetChoices extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		
-		String fromDocumentName = req.getParameter("FromDocumentName");
-		String fromSubFolderName = req.getParameter("FromSubFolderName");
-		String fromFolderName = req.getParameter("FromFolderName"); 
+//		String fromDocumentName = req.getParameter("FromDocumentName");
+//		String fromSubFolderName = req.getParameter("FromSubFolderName");
+//		String fromFolderName = req.getParameter("FromFolderName"); 
+		
+		HttpSession session = req.getSession(); 
+		
+		String fromDocumentName = (String) session.getAttribute("FromDocumentName");
+		String fromSubFolderName = (String) session.getAttribute("FromSubFolderName");
+		String fromFolderName = (String) session.getAttribute("FromFolderName"); 	
+		
+		
 		String toSubFolderName = req.getParameter("ToSubFolderName");
 		String toFolderName = req.getParameter("ToFolderName");
 		
@@ -103,7 +112,11 @@ public class GetChoices extends HttpServlet {
 				ctx.setVariable("documents", documents);
 				ctx.setVariable("subfolder", subFolder);
 				templateEngine.process(path, ctx, res.getWriter());
-
+				
+				session.removeAttribute("FromDocumentName");
+				session.removeAttribute("FromSubFolderName");
+				session.removeAttribute("FromFolderName");
+				
 			} catch (
 
 			SQLException e) {

@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -62,12 +63,22 @@ public class GetListDocuments extends HttpServlet{
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String subfolderName = req.getParameter("SubFolderName");
 		String folderName = req.getParameter("FolderName");
+		HttpSession session = req.getSession(); 
+		
+		
+		
+		
 		if (subfolderName != null) {
 			DocumentDAO dDao = new DocumentDAO(connection);
 			SubFolderDAO fDao = new SubFolderDAO(connection);
 			try {
-				SubFolder subfolder = fDao.findSubFolderBySubFoldAndFolderName(subfolderName,folderName);
-				List<Document> documents = dDao.findAllDocumentsBySubFolderAndFolderName(subfolderName,folderName);
+				SubFolder subfolder;
+				List<Document> documents;
+				
+				subfolder = fDao.findSubFolderBySubFoldAndFolderName(subfolderName,folderName);
+			    documents = dDao.findAllDocumentsBySubFolderAndFolderName(subfolderName,folderName);
+			    session.setAttribute("lastDocuments", documents);
+				
 				String path = "documents.html";
 				ServletContext servletContext = getServletContext();
 				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());

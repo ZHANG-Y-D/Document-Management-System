@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -72,37 +73,53 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 		
 		
 		try {
-			folders = fDao.findAllFolders();
-			
-			for(Folder f: folders){
-				subfolders = sfDao.findAllSubfoldersByFolderName(f.getFolderName());
-				folderAndSubFolders.put(f,subfolders);
-			}
-			//String path = "home.html";
-			String path;
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 			
 			String documentName = req.getParameter("DocumentName");
 			String subFolderName = req.getParameter("SubFolderName");
 			String folderName = req.getParameter("FolderName");
+			String path;
+			ServletContext servletContext = getServletContext();
+			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 			
 			
-			if(documentName == null ||
-					subFolderName == null ||
-					folderName == null) path = "home.html";
-			else {
-				DocumentDAO dDao = new DocumentDAO(connection);
-				Document document = dDao.findDocument(documentName, subFolderName, folderName);
-				ctx.setVariable("document", document);
-				 path = "choices.html";
-			}
+			HttpSession session = req.getSession(true); // if session does not exist, create one 
+			if (session.isNew()) {
+			       
+			       folders = fDao.findAllFolders();
+				
+				   for(Folder f: folders){
+					   subfolders = sfDao.findAllSubfoldersByFolderName(f.getFolderName());
+				   	   folderAndSubFolders.put(f,subfolders);
+				   }
+				   
+				   session.setAttribute("folders", folders);
+				   session.setAttribute("folderAndSubFolders", folderAndSubFolders);
+				   ctx.setVariable("fsubfolders", folderAndSubFolders);
+				   path = "home.html";
+				   
+		    } else // session already existing
+			       { 	
+					folders = (List<Folder>) session.getAttribute("folders");
+					Map <Folder, List<SubFolder>> folderAndSubfolders = (Map<Folder, List<SubFolder>>) session.getAttribute("folderAndSubFolders");
+					
+					ctx.setVariable("fsubfolders", folderAndSubfolders);
+					if(documentName == null ||subFolderName == null ||folderName == null) path = "home.html";
+					else { 
+						DocumentDAO dDao = new DocumentDAO(connection);
+						Document document = dDao.findDocument(documentName, subFolderName, folderName);
+						
+						session.setAttribute("FromDocumentName", documentName);
+						session.setAttribute("FromSubFolderName",subFolderName);
+						session.setAttribute("FromFolderName", folderName);
+						
+						ctx.setVariable("document", document);
+						path = "choices.html";}
+			       }
 			
 			ctx.setVariable("folders", folders);
-			ctx.setVariable("fsubfolders", folderAndSubFolders);
 			templateEngine.process(path, ctx, res.getWriter());
 			
-		} catch (SQLException e) {
+			} catch (SQLException e) {
 					res.sendError(500, "Database access failed");
 		}
 		

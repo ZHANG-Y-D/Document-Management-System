@@ -11,11 +11,13 @@
                 <p th:text= ${subfolder.SubFolderName}> subFolder</p>
                         <ul th:each="document : ${documents}" >
 							 <li> <span th:text= ${document.DocumentName}>document</span> 
-							 	  <a th:href="@{/GetDetails(DocumentName=${document.DocumentName},SubFolderName=${document.SubFolderName},FolderName=${document.FolderName})}"> >accedi </a>
+							 	   <a th:href="@{/GetDetails(DocumentName=${document.DocumentName},SubFolderName=${document.SubFolderName},FolderName=${document.FolderName})}"> >accedi </a>
 							      <a th:href="@{/GetFoldersAndSubFolders(DocumentName=${document.DocumentName},SubFolderName=${document.SubFolderName},FolderName=${document.FolderName})}">   >sposta </a>
 							 </li>
 					     
 					    </ul>
+					    <a th:href="@{/GetFoldersAndSubFolders}">Go folders</a>
+					    
                                 
       
 </body>

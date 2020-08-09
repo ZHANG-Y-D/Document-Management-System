@@ -12,8 +12,9 @@
                         <ul th:each="subfolder:${fsubfolders.get(folder)}"  >
 						     <li th:if="${subfolder.subFolderName == document.subfolderName && folder.FolderName == document.FolderName}"><span th:text= ${subfolder.SubFolderName}> subFolder</span></li>
 					         <li th:unless="${subfolder.subFolderName == document.subfolderName && folder.FolderName == document.FolderName}">
-					         <a th:href="@{/GetChoices(FromDocumentName=${document.DocumentName},FromSubFolderName=${document.SubFolderName},FromFolderName=${document.FolderName},ToSubFolderName=${subfolder.subFolderName},ToFolderName=${folder.FolderName},)}">
-					         <span th:text= ${subfolder.SubFolderName}> subFolder</span>
+					         <a th:href="@{/GetChoices(ToSubFolderName=${subfolder.subFolderName},ToFolderName=${folder.FolderName},)}">
+					         <!--  <a th:href="@{/GetChoices(FromDocumentName=${document.DocumentName},FromSubFolderName=${document.SubFolderName},FromFolderName=${document.FolderName},ToSubFolderName=${subfolder.subFolderName},ToFolderName=${folder.FolderName},)}">
+					         --><span th:text= ${subfolder.SubFolderName}> subFolder</span>
 					         </a></li>
 					         
 					         

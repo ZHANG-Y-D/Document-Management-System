@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -61,10 +62,43 @@ public class GetDetails extends HttpServlet{
 		}
 	}
 	
+//	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+//		  
+//			String documentName = req.getParameter("DocumentName");
+//
+//			
+//			if (documentName != null ) {
+//				
+//				HttpSession session = req.getSession();
+//				List<Document> documents = (List<Document>) session.getAttribute("lastDocuments");
+//				if(documents == null)res.sendError(505, "no session");
+//				String path = "documentDetails.html";
+//				ServletContext servletContext = getServletContext();
+//				
+//				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+//				
+//				for(Document d : documents) {
+//					if(d.getDocumentName()  == documentName) {
+//						ctx.setVariable("document", d);
+//						break;
+//					}
+//					
+//				}
+//				//ctx.setVariable("documents", documents);
+//				templateEngine.process(path, ctx, res.getWriter());
+//			} else {
+//				res.sendError(505, "Bad topic ID");
+//			}
+//			
+//		}
+		
+
+	
+	
 	
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		
+		HttpSession session = req.getSession();
 		String documentName = req.getParameter("DocumentName");
 		String subFolderName = req.getParameter("SubFolderName");
 		String folderName = req.getParameter("FolderName");
@@ -90,6 +124,5 @@ public class GetDetails extends HttpServlet{
 		}
 		
 	}
-	
 	
 }
