@@ -43,23 +43,16 @@ public class GetListDocuments extends HttpServlet{
 	
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-		String id = req.getParameter("subfolderid");
-		if (id != null) {
-			int sfolderId = 0;
-			try {
-				sfolderId = Integer.parseInt(id);
-			} catch (NumberFormatException e) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				response.getWriter().println("Incorrect param values");
-				return;
-			}
+		
+		String subFolderName = req.getParameter("subFolderName");
+		String folderName = req.getParameter("folderName");
+		if (subFolderName != null && folderName != null) {
 			
 			DocumentDAO dDao = new DocumentDAO(connection);
 			List<Document> documents;
-			//SubFolderDAO fDao = new SubFolderDAO(connection);
 			try {
-				//SubFolder subFolder = fDao.findSubFolderById(sfolderId );
-				documents = dDao.findDocumentsBySubFolderID(sfolderId);
+				
+				documents = dDao.findAllDocumentsBySubFolderAndFolderName(subFolderName, folderName);
 				
 			} catch (SQLException e) {
 				e.printStackTrace();

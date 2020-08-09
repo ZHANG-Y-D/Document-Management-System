@@ -101,42 +101,37 @@ public class DocumentDAO {
 
 	public void moveDocument(List<String> documentNameList, List<String> destinationSubFolderAndFolder)  throws SQLException{
 		
-		String query = 
-				"UPDATE Document SET SubFolderName = ?, FolderName = ? WHERE DocumentName = ? and SubFolderName = ? and FolderName = ?";
 		PreparedStatement pstatement = null;
+		
 		try {
-			pstatement = con.prepareStatement(query);
-			pstatement.setString(1, destinationSubFolderAndFolder.get(0));
-			pstatement.setString(2, destinationSubFolderAndFolder.get(1));
-			pstatement.setString(3, documentNameList.get(0));
-			pstatement.setString(4, documentNameList.get(1));
-			pstatement.setString(5, documentNameList.get(2));
+			if (destinationSubFolderAndFolder.size() == 2) {
+				String query = 
+						"UPDATE Document SET SubFolderName = ?, FolderName = ? WHERE DocumentName = ? and SubFolderName = ? and FolderName = ?";
+				pstatement = con.prepareStatement(query);
+				pstatement.setString(1, destinationSubFolderAndFolder.get(0));
+				pstatement.setString(2, destinationSubFolderAndFolder.get(1));
+				pstatement.setString(3, documentNameList.get(0));
+				pstatement.setString(4, documentNameList.get(1));
+				pstatement.setString(5, documentNameList.get(2));
+			} else {
+				String queryNew = 
+						"UPDATE Document SET DocumentName = ?, SubFolderName = ?, FolderName = ? WHERE DocumentName = ? and SubFolderName = ? and FolderName = ?";
+				pstatement = con.prepareStatement(queryNew);
+				pstatement.setString(1, destinationSubFolderAndFolder.get(0));
+				pstatement.setString(2, destinationSubFolderAndFolder.get(1));
+				pstatement.setString(3, destinationSubFolderAndFolder.get(2));
+				pstatement.setString(4, documentNameList.get(0));
+				pstatement.setString(5, documentNameList.get(1));
+				pstatement.setString(6, documentNameList.get(2));
+			}
 			pstatement.executeUpdate();
 		} catch (SQLException e) {
-			// If the file already exists, automatically rename
-			String newName = documentNameList.get(0) + "(1)";
-			
-			String queryNew = 
-					"UPDATE Document SET DocumentName = ?, SubFolderName = ?, FolderName = ? WHERE DocumentName = ? and SubFolderName = ? and FolderName = ?";
-			PreparedStatement pstatementNew = null;
-			try {
-				pstatementNew = con.prepareStatement(queryNew);
-				pstatementNew.setString(1, newName);
-				pstatementNew.setString(2, destinationSubFolderAndFolder.get(0));
-				pstatementNew.setString(3, destinationSubFolderAndFolder.get(1));
-				pstatementNew.setString(4, documentNameList.get(0));
-				pstatementNew.setString(5, documentNameList.get(1));
-				pstatementNew.setString(6, documentNameList.get(2));
-				pstatementNew.executeUpdate();
-			}catch (SQLException exc) {
 				try {
 					pstatement.close();
 				} catch (Exception e1) {
 
 				}
-			}
-			
-		}finally {
+		} finally {
 			try {
 				pstatement.close();
 			} catch (Exception e1) {

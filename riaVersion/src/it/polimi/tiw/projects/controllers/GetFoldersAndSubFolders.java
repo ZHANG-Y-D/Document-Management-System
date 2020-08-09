@@ -56,13 +56,9 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 			
 			for(Folder f: folders){
 				List<SubFolder> listSubFolder;
-				listSubFolder = sfDao.findSubfoldersByFolderName(f.getName());
+				listSubFolder = sfDao.findAllSubfoldersByFolderName(f.getFolderName());
 				subfolders.add((ArrayList<SubFolder>) listSubFolder);
 			}
-			
-			
-			//String id = req.getParameter("documentid");
-			
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -18,24 +18,22 @@ public class SubFolderDAO {
 		this.con = connection;
 	}
 	
-	public List<SubFolder> findSubfoldersByFolderName (String name) throws SQLException{
+	public List<SubFolder> findAllSubfoldersByFolderName (String folderName) throws SQLException{
 		
 		List<SubFolder> sfolders = new ArrayList<SubFolder>();
-		String query = "SELECT * FROM subfolder WHERE namefolder = ?";
+		String query = "SELECT * FROM SubFolder where FolderName = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		
 		try {
 			pstatement = con.prepareStatement(query);
-			pstatement.setString(1,name);
+			pstatement.setString(1, folderName);
 			result = pstatement.executeQuery();
 			while (result.next()) {
 				SubFolder sf = new SubFolder();
-				sf.setId(result.getInt("idsubfolder"));
-				sf.setName(result.getString("name"));
-				sf.setDate(result.getDate("date"));
-				sf.setFolderName(result.getString("namefolder"));
-				
+				sf.setSubFolderName(result.getString("SubFolderName"));
+				sf.setFolderName(result.getString("FolderName"));
+				sf.setDate(result.getDate("date"));				
 				sfolders.add(sf);
 			}
 		} catch (SQLException e) {
@@ -57,24 +55,22 @@ public class SubFolderDAO {
 		return sfolders;
 	}
 	
-	public SubFolder findSubFolderById(int sfolderId) throws SQLException{
+	public SubFolder findSubFolderBySubFoldAndFolderName(String subFolderName, String folderName) throws SQLException{
 		
 		SubFolder sf= new SubFolder();
-		String query = "SELECT * FROM subfolder WHERE idsubfolder = ?";
+		String query = "SELECT * FROM SubFolder where SubFolderName = ? and FolderName = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		
 		try {
 			pstatement = con.prepareStatement(query);
-			pstatement.setInt(1, sfolderId);
+			pstatement.setString(1, subFolderName);
+			pstatement.setString(2, folderName);
 			result = pstatement.executeQuery();
 			while (result.next()) {
-	
-				sf.setId(result.getInt("idsubfolder"));
-				sf.setName(result.getString("name"));
-				sf.setDate(result.getDate("date"));
-				sf.setFolderName(result.getString("namefolder"));
-				
+				sf.setSubFolderName(result.getString("SubFolderName"));
+				sf.setFolderName(result.getString("FolderName"));
+				sf.setDate(result.getDate("Date"));	
 			}
 		} catch (SQLException e) {
 			throw new SQLException(e);

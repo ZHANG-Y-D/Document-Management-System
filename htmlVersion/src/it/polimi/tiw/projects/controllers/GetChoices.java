@@ -84,6 +84,16 @@ public class GetChoices extends HttpServlet {
 				toSubFolder.add(toSubFolderName);
 				toSubFolder.add(toFolderName);
 				
+				// Find if the newName is already existed and rename it
+				if(dDao.findDocument(fromDocumentName, toSubFolderName, toFolderName).getDocumentName() != null) {
+					String newName = fromDocumentName + "(1)";
+					while(dDao.findDocument(newName, toSubFolderName, toFolderName).getDocumentName() != null) {
+						newName = newName + "(1)";
+						System.out.println(newName);
+					}
+					toSubFolder.add(0, newName);
+				}
+				
 				dDao.moveDocument(fromDocument, toSubFolder);
 				SubFolder subFolder = fDao.findSubFolderBySubFoldAndFolderName(toSubFolderName, toFolderName);
 				List<Document> documents = dDao.findAllDocumentsBySubFolderAndFolderName(toSubFolderName, toFolderName);

@@ -18,26 +18,26 @@ public class DocumentDAO {
 		this.con = connection;
 	}
 	
-	public List<Document> findDocumentsBySubFolderID (int sfolderId) throws SQLException{
+	public List<Document> findAllDocumentsBySubFolderAndFolderName (String subFolderName, String folderName) throws SQLException{
 		
 		List<Document> documents = new ArrayList<Document>();
-		String query = "SELECT * FROM document WHERE idSubfolder = ?";
+		String query = "SELECT * FROM Document WHERE SubFolderName = ? and FolderName = ?";
 		ResultSet result = null;
 		PreparedStatement pstatement = null;
 		
 		try {
 			pstatement = con.prepareStatement(query);
-			pstatement.setInt(1, sfolderId);
+			pstatement.setString(1, subFolderName);
+			pstatement.setString(2, folderName);
 			result = pstatement.executeQuery();
 			while (result.next()) {
 				Document d = new Document();
-				d.setId(result.getInt("iddocument"));
-				d.setName(result.getString("name"));
-				d.setDate(result.getDate("date"));
-				d.setSubFolderId(result.getInt("idSubfolder"));
-				d.setSummery(result.getString("summary"));
-				d.setType(result.getString("type"));
-		
+				d.setDocumentName(result.getString("DocumentName"));
+				d.setSubFolderName(result.getString("SubFolderName"));
+				d.setFolderName(result.getString("FolderName"));
+				d.setDate(result.getDate("Date"));
+				d.setSummery(result.getString("Summary"));
+				d.setType(result.getString("Type"));
 				documents.add(d);
 			}
 		} catch (SQLException e) {
@@ -58,17 +58,79 @@ public class DocumentDAO {
 		return documents;
 	}
 	
-	public void moveDocument(int subfolderId, int documentId)  throws SQLException{
+	public Document findDocument (String documentName, String subFolderName, String folderName) throws SQLException{
+			
+			Document document = new Document();
+			String query = "SELECT * FROM Document WHERE DocumentName = ? and SubFolderName = ? and FolderName = ?";
+			ResultSet result = null;
+			PreparedStatement pstatement = null;
+			
+			try {
+				pstatement = con.prepareStatement(query);
+				pstatement.setString(1, documentName);
+				pstatement.setString(2, subFolderName);
+				pstatement.setString(3, folderName);
+				result = pstatement.executeQuery();
+				while (result.next()) {
+					document.setDocumentName(result.getString("DocumentName"));
+					document.setSubFolderName(result.getString("SubFolderName"));
+					document.setFolderName(result.getString("FolderName"));
+					document.setDate(result.getDate("Date"));
+					document.setSummery(result.getString("Summary"));
+					document.setType(result.getString("Type"));
+				}
+				
+			} catch (SQLException e) {
+				throw new SQLException(e);
+	
+			} finally {
+				try {
+					result.close();
+				} catch (Exception e1) {
+					throw new SQLException("Cannot close result");
+				}
+				try {
+					pstatement.close();
+				} catch (Exception e1) {
+					throw new SQLException("Cannot close statement");
+				}
+			}
+			
+			return document;
+		}
+
+	public void moveDocument(List<String> documentNameList, List<String> destinationSubFolderAndFolder)  throws SQLException{
 		
-		String query = "UPDATE document set idSubfolder = ? WHERE iddocument = ?";
 		PreparedStatement pstatement = null;
+		
 		try {
-			pstatement = con.prepareStatement(query);
-			pstatement.setInt(1, subfolderId);
-			pstatement.setInt(2, documentId);
+			if (destinationSubFolderAndFolder.size() == 2) {
+				String query = 
+						"UPDATE Document SET SubFolderName = ?, FolderName = ? WHERE DocumentName = ? and SubFolderName = ? and FolderName = ?";
+				pstatement = con.prepareStatement(query);
+				pstatement.setString(1, destinationSubFolderAndFolder.get(0));
+				pstatement.setString(2, destinationSubFolderAndFolder.get(1));
+				pstatement.setString(3, documentNameList.get(0));
+				pstatement.setString(4, documentNameList.get(1));
+				pstatement.setString(5, documentNameList.get(2));
+			} else {
+				String queryNew = 
+						"UPDATE Document SET DocumentName = ?, SubFolderName = ?, FolderName = ? WHERE DocumentName = ? and SubFolderName = ? and FolderName = ?";
+				pstatement = con.prepareStatement(queryNew);
+				pstatement.setString(1, destinationSubFolderAndFolder.get(0));
+				pstatement.setString(2, destinationSubFolderAndFolder.get(1));
+				pstatement.setString(3, destinationSubFolderAndFolder.get(2));
+				pstatement.setString(4, documentNameList.get(0));
+				pstatement.setString(5, documentNameList.get(1));
+				pstatement.setString(6, documentNameList.get(2));
+			}
 			pstatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new SQLException(e);
+				try {
+					pstatement.close();
+				} catch (Exception e1) {
+
+				}
 		} finally {
 			try {
 				pstatement.close();
@@ -80,43 +142,6 @@ public class DocumentDAO {
 	}
 	
 
-	public Document findDocumentByID (int Id) throws SQLException{
-		
-		Document d = new Document();
-		String query = "SELECT * FROM document WHERE iddocument = ?";
-		ResultSet result = null;
-		PreparedStatement pstatement = null;
-		
-		try {
-			pstatement = con.prepareStatement(query);
-			pstatement.setInt(1, Id);
-			result = pstatement.executeQuery();
-			while (result.next()) {
-				d.setId(result.getInt("iddocument"));
-				d.setName(result.getString("name"));
-				d.setDate(result.getDate("date"));
-				d.setSubFolderId(result.getInt("idSubfolder"));
-				d.setSummery(result.getString("summary"));
-				d.setType(result.getString("type"));
-		
-			}
-		} catch (SQLException e) {
-			throw new SQLException(e);
-
-		} finally {
-			try {
-				result.close();
-			} catch (Exception e1) {
-				throw new SQLException("Cannot close result");
-			}
-			try {
-				pstatement.close();
-			} catch (Exception e1) {
-				throw new SQLException("Cannot close statement");
-			}
-		}
-		return d;
-	}
 	
 	
 	

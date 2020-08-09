@@ -20,9 +20,6 @@
 
             documentsList = new documentsList(documentDiv);
             choicesList = new ChoicesList(messageContainer);
-
-
-
         }
 
 
@@ -49,7 +46,6 @@
                         }
                       }
                     })
-
         }
 
 
@@ -57,13 +53,13 @@
             var l = subfolderList.length,
             row,li,foldercell,subfoldercell, linkcell, anchor;
 
-            if (l == 0) {
+            if (subfolderList.length == 0) {
                 messageCell.textContent = "No folders yet!";
               } else {
                   var self = this;
                   subfolderList.forEach(list => {
                  	row = document.createElement("p");
-                 	row.textContent = list[0].folderName;
+                 	row.textContent = list[0].folderNameOfSubFolder;
                       foldercell = document.createElement("ul");
                      // foldercell.textContent = list[0].folderName;
                       self.messageCell.appendChild(row);
@@ -74,15 +70,12 @@
                                foldercell.appendChild(li);
                                anchor = document.createElement("a");
                                li.appendChild(anchor);
-
-
-                               anchor.textContent = subfolder.name;
-
-                               anchor.setAttribute('subfolderid', subfolder.id);
-                               anchor.setAttribute('subfoldername',subfolder.name);
+                               anchor.textContent = subfolder.subFolderName;
+                               anchor.setAttribute('subFolderName',subfolder.subFolderName);
+                               anchor.setAttribute('folderNameOfSubFolder',subfolder.folderNameOfSubFolder);
                                anchor.addEventListener("click", (e) => {
                                  // dependency via module parameter
-                                 documentsList.show(e.target.getAttribute("subfolderid"),e.target.getAttribute("subfoldername")); // the list must know the details container
+                                   documentsList.show(e.target.getAttribute("subFolderName"),e.target.getAttribute("folderNameOfSubFolder")); // the list must know the details container
                                }, false);
                                anchor.href = "#";
 
@@ -96,37 +89,37 @@
         }
 
 }
-        function documentsList(_divCell){
-             this.divContainer = _divCell;
 
-            this.show = function (subfolderid,subfoldername) {
+
+        function documentsList(_divCell){
+            this.divContainer = _divCell;
+
+            this.show = function (subFolderName,folderNameOfSubFolder) {
                 var self = this;
-                makeCall("GET", "GetListDocuments?subfolderid=" + subfolderid, null,
+                makeCall("GET", "GetListDocuments?subFolderName=" + subFolderName+"&folderName="+folderNameOfSubFolder, null,
                   function(req) {
-                          if (req.readyState == 4) {
+                          if (req.readyState === 4) {
                             var message = req.responseText;
-                            if (req.status == 200) {
-                              self.update(JSON.parse(req.responseText),subfoldername); // self visible by
+                            if (req.status === 200) {
+                              self.update(JSON.parse(req.responseText)); // self visible by
                               // closure
                             } else {
                               self.divContainer.textContent = message;
                             }
                           }
                         })
-
             }
 
 
-            this.update = function(documentList,subfoldername){
-                var l = documentList.length,
+            this.update = function(documentList){
                 p,li,documentCell,documentText, linkcell, anchorSposta;
 
-                if (l == 0) {
+                if (documentList.length === 0) {
                     divContainer.textContent = "No document yet!";
-                  } else {
+                } else {
                       var self = this;
                       p = document.createElement("p");
-                      p.textContent = subfoldername;
+                      p.textContent = documentList[0].subFolderNameOfDocument;
                       self.divContainer.appendChild(p);
                       li =  document.createElement("ul");
                       self.divContainer.appendChild(li);
@@ -135,7 +128,9 @@
 
                           documentCell = document.createElement("li");
                           documentText = document.createElement("span");
-                          documentText.textContent = d.name;
+                          documentText.textContent = d.documentName;
+
+
                           anchorSposta = document.createElement("a");
                           anchorSposta.textContent = ">sposta"
                           anchorSposta.setAttribute('documentid',d.id);
@@ -149,11 +144,9 @@
                           li.appendChild(documentCell);
                           li.appendChild(documentText);
                           li.appendChild(anchorSposta);
-
-
                       });
 
-                  }
+                }
 
         }
 

@@ -75,24 +75,24 @@ public class GetChoices extends HttpServlet {
 			List<Document> documents;
 			SubFolderDAO fDao = new SubFolderDAO(connection);
 		
-			try {
-			
-				dDao.moveDocument(sfolderId, documentId);
-				
-				SubFolder subFolder = fDao.findSubFolderById(sfolderId );
-				documents = dDao.findDocumentsBySubFolderID(sfolderId);
-				String path = "documents.html";
-				ServletContext servletContext = getServletContext();
-				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
-				ctx.setVariable("documents", documents);
-				ctx.setVariable("subfolder", subFolder);
-				templateEngine.process(path, ctx, res.getWriter());
-
-			} catch (
-
-			SQLException e) {
-				res.sendError(500, "Database access failed");
-			}
+//			try {
+//			
+//				dDao.moveDocument(sfolderId, documentId);
+//				
+//				SubFolder subFolder = fDao.findSubFolderById(sfolderId );
+//				documents = dDao.findDocumentsBySubFolderID(sfolderId);
+//				String path = "documents.html";
+//				ServletContext servletContext = getServletContext();
+//				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+//				ctx.setVariable("documents", documents);
+//				ctx.setVariable("subfolder", subFolder);
+//				templateEngine.process(path, ctx, res.getWriter());
+//
+//			} catch (
+//
+//			SQLException e) {
+//				res.sendError(500, "Database access failed");
+//			}
 		} else {
 			res.sendError(505, "Bad topic ID");
 		}
