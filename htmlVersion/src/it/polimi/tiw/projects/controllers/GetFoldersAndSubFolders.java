@@ -82,6 +82,7 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 			
 			
+
 			HttpSession session = req.getSession(true); // if session does not exist, create one 
 			if (session.isNew()) {
 			       
@@ -115,6 +116,7 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 						ctx.setVariable("document", document);
 						path = "choices.html";}
 			       }
+
 			
 			ctx.setVariable("folders", folders);
 			templateEngine.process(path, ctx, res.getWriter());
