@@ -1,23 +1,34 @@
 (function(){
 
 
-    var nameDiv = document.getElementById("nameDiv");
-    var massageDiv = document.getElementById("massageDiv");
-    var pageOrchestrator = new PageOrchestrator(nameDiv,massageDiv);
+    var leftFolderDiv = document.getElementById("leftFolderDiv");
+    var leftMassageDiv = document.getElementById("leftMassageDiv");
+
+    var rightSubFolderDiv = document.getElementById("rightSubFolderDiv");
+    var rightDocumentDiv = document.getElementById("rightDocumentDiv");
+    var rightMassageDiv = document.getElementById("rightMassageDiv");
+    var pageOrchestrator = new PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
 
     window.addEventListener("load", () => {
           pageOrchestrator.start(); // initialize the components
           // pageOrchestrator.refresh(); // display initial content
       }, false);
-
+    
 })();
 
-function PageOrchestrator(nameDiv,massageDiv){
+// TODO return abnormal message from server
+// TODO cestino
+// TODO accedi
+// TODO refresh
+// TODO CSS
+
+
+function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv){
 
 
     this.start = function(){
 
-        new FolderAndSubFolder(nameDiv,massageDiv).show();
+        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv).show();
         // choicesList = new ChoicesList(messageContainer);
     }
 
@@ -27,9 +38,8 @@ function PageOrchestrator(nameDiv,massageDiv){
 
 }
 
-function FolderAndSubFolder(nameDiv,massageDiv) {
+function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv) {
     var self = this;
-
     this.show = function () {
         makeCall("GET", "GetFoldersAndSubFolders", null,
             function (req) {
@@ -39,7 +49,7 @@ function FolderAndSubFolder(nameDiv,massageDiv) {
                         self.update(JSON.parse(req.responseText)); // self visible by
                         // closure
                     } else {
-                        massageDiv.textContent = message;
+                        leftMassageDiv.textContent = message;
                     }
                 }
             })
@@ -47,25 +57,30 @@ function FolderAndSubFolder(nameDiv,massageDiv) {
 
 
     this.update = function (subFolderList) {
-        // var row, li, foldercell, subfoldercell, linkcell, anchor;
+
+         leftFolderDiv.innerHTML="";
+         leftMassageDiv.innerHTML="";
+        rightSubFolderDiv.innerHTML="";
+        rightDocumentDiv.innerHTML="";
+         rightMassageDiv.innerHTML="";
 
         // Check browser support
         if (typeof (Storage) !== "undefined") {
             // Store
             sessionStorage.setItem("subFolderList", JSON.stringify(subFolderList));
         } else {
-            massageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
+            leftMassageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
         }
 
         if (subFolderList.length === 0) {
-            nameDiv.textContent = "No folders yet!";
+            leftFolderDiv.textContent = "No folders yet!";
         } else {
             subFolderList.forEach(list => {
                 var row = document.createElement("p");
                 row.textContent = list[0].folderNameOfSubFolder;
                 var folderCell = document.createElement("ul");
-                nameDiv.appendChild(row);
-                nameDiv.appendChild(folderCell);
+                leftFolderDiv.appendChild(row);
+                leftFolderDiv.appendChild(folderCell);
 
                 list.forEach(subfolder => {
                     var li = document.createElement("li");
@@ -77,7 +92,7 @@ function FolderAndSubFolder(nameDiv,massageDiv) {
                     anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
                     anchor.addEventListener("click", (e) => {
                         // dependency via module parameter
-                        var documentsList = new DocumentsList(nameDiv,massageDiv);
+                        var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
                         documentsList.show(e.target.getAttribute("subFolderName"), e.target.getAttribute("folderNameOfSubFolder")); // the list must know the details container
                     }, false);
                     anchor.href = "#";
@@ -87,7 +102,7 @@ function FolderAndSubFolder(nameDiv,massageDiv) {
     }
 }
 
-function DocumentsList(nameDiv,massageDiv){
+function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv){
     var self = this;
     this.show = function (subFolderName,folderNameOfSubFolder) {
         makeCall("GET", "GetListDocuments?subFolderName=" + subFolderName+"&folderName="+folderNameOfSubFolder, null,
@@ -98,24 +113,28 @@ function DocumentsList(nameDiv,massageDiv){
                       self.update(JSON.parse(req.responseText)); // self visible by
                       // closure
                     } else {
-                        massageDiv.textContent = message;
+                        rightMassageDiv.textContent = message;
                     }
                   }
-                })
+          })
     }
 
     this.update = function(documentList){
-        // documentCell,documentText, linkcell;
+
+        rightSubFolderDiv.innerHTML="";
+        rightDocumentDiv.innerHTML="";
+        rightMassageDiv.innerHTML="";
+
 
         if (documentList.length === 0) {
-            massageDiv.textContent = "No document yet!";
+            rightMassageDiv.textContent = "No document yet!";
         } else {
 
             var p = document.createElement("p");
             p.textContent = documentList[0].subFolderNameOfDocument;
-            nameDiv.appendChild(p);
+            rightSubFolderDiv.appendChild(p);
             var li = document.createElement("ul");
-            nameDiv.appendChild(li);
+            rightDocumentDiv.appendChild(li);
 
             documentList.forEach(d => {
                 var documentCell = document.createElement("li");
@@ -126,27 +145,42 @@ function DocumentsList(nameDiv,massageDiv){
                 anchorSposta.setAttribute('fromDocumentName', d.documentName);
                 anchorSposta.setAttribute('fromSubFolderName', d.subFolderNameOfDocument);
                 anchorSposta.setAttribute('fromFolderName', d.folderNameOfDocument);
+
+                var choicesList = new ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
+
                 anchorSposta.addEventListener("click", (e) => {
                     // dependency via module parameter
-                    var choicesList = new ChoicesList(nameDiv,massageDiv);
+
                     choicesList.show(e.target.getAttribute("fromDocumentName"),
                                       e.target.getAttribute("fromSubFolderName"),
                                       e.target.getAttribute("fromFolderName")); // the list must know the details container
                 }, false);
 
+                anchorSposta.addEventListener("dragstart", function(event) {
+
+                    // make it half transparent
+                    event.target.style.opacity = .5;
+                    choicesList.show(event.target.getAttribute("fromDocumentName"),
+                        event.target.getAttribute("fromSubFolderName"),
+                        event.target.getAttribute("fromFolderName"));
+
+                }, false);
+
                 li.appendChild(documentCell);
                 li.appendChild(documentText);
                 li.appendChild(anchorSposta);
+                anchorSposta.href = "#";
             });
         }
     }
-    this.reset = function() {
-         // this.divContainer.style.visibility = "hidden";
+
+    this.refresh = function() {
+
     }
 }
 
 
-function ChoicesList(nameDiv,massageDiv) {
+function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv) {
     var self = this;
 
     this.show = function (fromDocumentName, fromSubFolderName, fromFolderName) {
@@ -156,19 +190,22 @@ function ChoicesList(nameDiv,massageDiv) {
             self.update(fromDocumentName, fromSubFolderName, fromFolderName, subFolderList);
 
         } else {
-            massageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
+            leftMassageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
         }
     }
 
 
     this.update = function (fromDocumentName, fromSubFolderName, fromFolderName, subFolderList) {
 
+        leftFolderDiv.innerHTML="";
+        leftMassageDiv.innerHTML="";
+
         subFolderList.forEach(list => {
             var row = document.createElement("p");
             row.textContent = list[0].folderNameOfSubFolder;
             var folderCell = document.createElement("ul");
-            nameDiv.appendChild(row);
-            nameDiv.appendChild(folderCell);
+            leftFolderDiv.appendChild(row);
+            leftFolderDiv.appendChild(folderCell);
             list.forEach(subfolder => {
                 var li = document.createElement("li");
                 folderCell.appendChild(li);
@@ -177,22 +214,61 @@ function ChoicesList(nameDiv,massageDiv) {
                 anchor.textContent = subfolder.subFolderName;
                 anchor.setAttribute('subFolderName', subfolder.subFolderName);
                 anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
+
+                var toDoSposta = new ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv)
                 anchor.addEventListener("click", (e) => {
-                    new ToDoSposta(nameDiv,massageDiv).show(fromDocumentName, fromSubFolderName, fromFolderName,
+                    toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
                                      e.target.getAttribute("subFolderName"),
                                      e.target.getAttribute("folderNameOfSubFolder"))
                 }, false);
+
+
+                // anchor.addEventListener("DOMContentLoaded", (e) => {
+                //     // Get the element by id
+                //     const element = document.getElementById("rightDocumentDiv");
+                //     // Add the ondragstart event listener
+                //     element.addEventListener("drop", drop_handler);
+                //     toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
+                //         e.target.getAttribute("subFolderName"),
+                //         e.target.getAttribute("folderNameOfSubFolder"))
+                // });
+
+                anchor.addEventListener("dragover", function(event) {
+
+                    event.target.style.opacity = .3;
+
+                }, false);
+
+                anchor.addEventListener("dragleave", function(event) {
+
+                    event.target.style.opacity = 1;
+
+                }, false);
+
+                anchor.addEventListener("drop", function(event) {
+
+                    // prevent default action (open as link for some elements)
+                    event.preventDefault();
+
+
+                    toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
+                        event.target.getAttribute("subFolderName"),
+                        event.target.getAttribute("folderNameOfSubFolder"))
+
+                }, false);
+
                 anchor.href = "#";
             });
         });
-
     }
 
+    this.refresh = function () {
 
+    }
 }
 
 
-function ToDoSposta(nameDiv,massageDiv){
+function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv){
 	var self = this;
 
     this.show = function (fromDocumentName, fromSubFolderName, fromFolderName,toSubFolderName,toFolderNameOfSubFolder) {
@@ -205,18 +281,16 @@ function ToDoSposta(nameDiv,massageDiv){
                 if (req.readyState === 4) {
                     var message = req.responseText;
                     if (req.status === 200) {
-                        self.update();
+                        self.refresh();
                     } else {
-                        massageDiv.textContent = message;
+                        rightMassageDiv.textContent = message;
                     }
                 }
-            })
+            }
+        )
     }
 
-
-    this.update = function(){
-        new FolderAndSubFolder(nameDiv,massageDiv).show();
+    this.refresh = function(){
+        location.reload();
     }
-
-
 }
