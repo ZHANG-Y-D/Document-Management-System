@@ -21,18 +21,21 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import com.google.gson.Gson;
+
 import it.polimi.tiw.projects.beans.Document;
 import it.polimi.tiw.projects.beans.Folder;
 import it.polimi.tiw.projects.beans.SubFolder;
 import it.polimi.tiw.projects.dao.DocumentDAO;
 import it.polimi.tiw.projects.dao.FolderDAO;
 import it.polimi.tiw.projects.dao.SubFolderDAO;
+import it.polimi.tiw.projects.utils.ConnectionHandler;
 
 @WebServlet("/GetDetails")
 public class GetDetails extends HttpServlet{
+	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 	
 	public GetDetails() {
 		super();
@@ -40,57 +43,35 @@ public class GetDetails extends HttpServlet{
 	}
 	
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-		try {
-			
-			String driver = servletContext.getInitParameter("dbDriver");
-			String url = servletContext.getInitParameter("dbUrl");
-			String user = servletContext.getInitParameter("dbUser");
-			String password = servletContext.getInitParameter("dbPassword");
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url, user, password);
-		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
-		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
-		}
+		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 	
 	
-	
-	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
 		
-//		String id = req.getParameter("documentid");
-//		if (id != null) {
-//			int documentid = 0;
-//			try {
-//				documentid = Integer.parseInt(id);
-//			} catch (NumberFormatException e) {
-//				res.sendError(505, "Bad number format");
-//			}
+//		String documentName = req.getParameter("DocumentName");
+//		String subFolderName = req.getParameter("SubFolderName");
+//		String folderName = req.getParameter("FolderName");
+//		
+//		if (documentName != null &&
+//				subFolderName != null &&
+//						folderName != null) {
 //			DocumentDAO dDao = new DocumentDAO(connection);
 //			Document document;
 //			try {
-//				document = dDao.findDocumentByID(documentid);
-//				String path = "documentDetails.html";
-//				ServletContext servletContext = getServletContext();
-//				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
-//				ctx.setVariable("document", document);
-//				templateEngine.process(path, ctx, res.getWriter());
-//				
+//				document = dDao.findDocument(documentName,subFolderName,folderName);			
 //			} catch ( SQLException e ) {
 //				res.sendError(500, "Database access failed");
 //			}
+//			String json = new Gson().toJson(subfolders);
+//			response.setContentType("application/json");
+//			response.setCharacterEncoding("UTF-8");
+//			response.getWriter().write(json);
 //		} else {
 //			res.sendError(505, "Bad topic ID");
 //		}
 //		
-	}
+//	}
 	
 	
 }

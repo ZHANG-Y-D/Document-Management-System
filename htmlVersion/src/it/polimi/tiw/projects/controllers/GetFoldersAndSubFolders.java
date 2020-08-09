@@ -95,7 +95,7 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 				DocumentDAO dDao = new DocumentDAO(connection);
 				Document document = dDao.findDocument(documentName, subFolderName, folderName);
 				ctx.setVariable("document", document);
-				 path = "choices.html";
+				path = "choices.html";
 			}
 			
 			ctx.setVariable("folders", folders);

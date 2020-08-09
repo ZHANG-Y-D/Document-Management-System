@@ -1,276 +1,222 @@
 (function(){
 
-    var folderAndSubFolder, documentsList, detailsDocument, choicesList,
-        pageOrchestrator = new PageOrchestrator();
+
+    var nameDiv = document.getElementById("nameDiv");
+    var massageDiv = document.getElementById("massageDiv");
+    var pageOrchestrator = new PageOrchestrator(nameDiv,massageDiv);
 
     window.addEventListener("load", () => {
           pageOrchestrator.start(); // initialize the components
-          pageOrchestrator.refresh(); // display initial content
+          // pageOrchestrator.refresh(); // display initial content
       }, false);
 
+})();
 
-    function PageOrchestrator(){
+function PageOrchestrator(nameDiv,massageDiv){
 
-        var messageContainer = document.getElementById("name");
-        var documentDiv = document.getElementById("documents");
-        this.start = function (){
 
-            folderAndSubFolder = new FolderAndSubFolder(messageContainer)
-            folderAndSubFolder.show();
+    this.start = function(){
 
-            documentsList = new documentsList(documentDiv);
-            choicesList = new ChoicesList(messageContainer);
+        new FolderAndSubFolder(nameDiv,massageDiv).show();
+        // choicesList = new ChoicesList(messageContainer);
+    }
+
+    this.refresh = function(){
+        // documentsList.reset();
+    }
+
+}
+
+function FolderAndSubFolder(nameDiv,massageDiv) {
+    var self = this;
+
+    this.show = function () {
+        makeCall("GET", "GetFoldersAndSubFolders", null,
+            function (req) {
+                if (req.readyState === 4) {
+                    var message = req.responseText;
+                    if (req.status === 200) {
+                        self.update(JSON.parse(req.responseText)); // self visible by
+                        // closure
+                    } else {
+                        massageDiv.textContent = message;
+                    }
+                }
+            })
+    }
+
+
+    this.update = function (subFolderList) {
+        // var row, li, foldercell, subfoldercell, linkcell, anchor;
+
+        // Check browser support
+        if (typeof (Storage) !== "undefined") {
+            // Store
+            sessionStorage.setItem("subFolderList", JSON.stringify(subFolderList));
+        } else {
+            massageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
         }
 
+        if (subFolderList.length === 0) {
+            nameDiv.textContent = "No folders yet!";
+        } else {
+            subFolderList.forEach(list => {
+                var row = document.createElement("p");
+                row.textContent = list[0].folderNameOfSubFolder;
+                var folderCell = document.createElement("ul");
+                nameDiv.appendChild(row);
+                nameDiv.appendChild(folderCell);
 
-        this.refresh = function(){
-           // documentsList.reset();
+                list.forEach(subfolder => {
+                    var li = document.createElement("li");
+                    folderCell.appendChild(li);
+                    var anchor = document.createElement("a");
+                    li.appendChild(anchor);
+                    anchor.textContent = subfolder.subFolderName;
+                    anchor.setAttribute('subFolderName', subfolder.subFolderName);
+                    anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
+                    anchor.addEventListener("click", (e) => {
+                        // dependency via module parameter
+                        var documentsList = new DocumentsList(nameDiv,massageDiv);
+                        documentsList.show(e.target.getAttribute("subFolderName"), e.target.getAttribute("folderNameOfSubFolder")); // the list must know the details container
+                    }, false);
+                    anchor.href = "#";
+                });
+            });
         }
+    }
+}
+
+function DocumentsList(nameDiv,massageDiv){
+    var self = this;
+    this.show = function (subFolderName,folderNameOfSubFolder) {
+        makeCall("GET", "GetListDocuments?subFolderName=" + subFolderName+"&folderName="+folderNameOfSubFolder, null,
+          function(req) {
+                  if (req.readyState === 4) {
+                    var message = req.responseText;
+                    if (req.status === 200) {
+                      self.update(JSON.parse(req.responseText)); // self visible by
+                      // closure
+                    } else {
+                        massageDiv.textContent = message;
+                    }
+                  }
+                })
+    }
+
+    this.update = function(documentList){
+        // documentCell,documentText, linkcell;
+
+        if (documentList.length === 0) {
+            massageDiv.textContent = "No document yet!";
+        } else {
+
+            var p = document.createElement("p");
+            p.textContent = documentList[0].subFolderNameOfDocument;
+            nameDiv.appendChild(p);
+            var li = document.createElement("ul");
+            nameDiv.appendChild(li);
+
+            documentList.forEach(d => {
+                var documentCell = document.createElement("li");
+                var documentText = document.createElement("span");
+                documentText.textContent = d.documentName;
+                var anchorSposta = document.createElement("a");
+                anchorSposta.textContent = ">sposta"
+                anchorSposta.setAttribute('fromDocumentName', d.documentName);
+                anchorSposta.setAttribute('fromSubFolderName', d.subFolderNameOfDocument);
+                anchorSposta.setAttribute('fromFolderName', d.folderNameOfDocument);
+                anchorSposta.addEventListener("click", (e) => {
+                    // dependency via module parameter
+                    var choicesList = new ChoicesList(nameDiv,massageDiv);
+                    choicesList.show(e.target.getAttribute("fromDocumentName"),
+                                      e.target.getAttribute("fromSubFolderName"),
+                                      e.target.getAttribute("fromFolderName")); // the list must know the details container
+                }, false);
+
+                li.appendChild(documentCell);
+                li.appendChild(documentText);
+                li.appendChild(anchorSposta);
+            });
+        }
+    }
+    this.reset = function() {
+         // this.divContainer.style.visibility = "hidden";
+    }
+}
+
+
+function ChoicesList(nameDiv,massageDiv) {
+    var self = this;
+
+    this.show = function (fromDocumentName, fromSubFolderName, fromFolderName) {
+
+        if (typeof (Storage) !== "undefined") {
+            var subFolderList = JSON.parse(sessionStorage.getItem("subFolderList"));
+            self.update(fromDocumentName, fromSubFolderName, fromFolderName, subFolderList);
+
+        } else {
+            massageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
+        }
+    }
+
+
+    this.update = function (fromDocumentName, fromSubFolderName, fromFolderName, subFolderList) {
+
+        subFolderList.forEach(list => {
+            var row = document.createElement("p");
+            row.textContent = list[0].folderNameOfSubFolder;
+            var folderCell = document.createElement("ul");
+            nameDiv.appendChild(row);
+            nameDiv.appendChild(folderCell);
+            list.forEach(subfolder => {
+                var li = document.createElement("li");
+                folderCell.appendChild(li);
+                var anchor = document.createElement("a");
+                li.appendChild(anchor);
+                anchor.textContent = subfolder.subFolderName;
+                anchor.setAttribute('subFolderName', subfolder.subFolderName);
+                anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
+                anchor.addEventListener("click", (e) => {
+                    new ToDoSposta(nameDiv,massageDiv).show(fromDocumentName, fromSubFolderName, fromFolderName,
+                                     e.target.getAttribute("subFolderName"),
+                                     e.target.getAttribute("folderNameOfSubFolder"))
+                }, false);
+                anchor.href = "#";
+            });
+        });
 
     }
 
-    function FolderAndSubFolder(_messagecell){
-        this.messageCell = _messagecell;
-
-        this.show = function () {
-            var self = this;
-            makeCall("GET", "GetFoldersAndSubFolders", null,
-              function(req) {
-                      if (req.readyState == 4) {
-                        var message = req.responseText;
-                        if (req.status == 200) {
-                          self.update(JSON.parse(req.responseText)); // self visible by
-
-                          // closure
-                        } else {
-                          self.messageCell.textContent = message;
-                        }
-                      }
-                    })
-        }
-
-
-        this.update = function(subfolderList){
-            var l = subfolderList.length,
-            row,li,foldercell,subfoldercell, linkcell, anchor;
-            // Check browser support
-           if (typeof(Storage) !== "undefined") {
-              // Store
-           sessionStorage.setItem("subfolderList", JSON.stringify(subfolderList));
-
-            } else {
-            self.messageCell.innerHTML = "Sorry, your browser does not support Web Storage...";
-           }
-
-            if (subfolderList.length == 0) {
-                messageCell.textContent = "No folders yet!";
-              } else {
-                  var self = this;
-                  subfolderList.forEach(list => {
-                 	row = document.createElement("p");
-                 	row.textContent = list[0].folderNameOfSubFolder;
-                      foldercell = document.createElement("ul");
-                     // foldercell.textContent = list[0].folderName;
-                      self.messageCell.appendChild(row);
-                      self.messageCell.appendChild(foldercell);
-
-                      list.forEach(subfolder =>{
-                               li = document.createElement("li");
-                               foldercell.appendChild(li);
-                               anchor = document.createElement("a");
-                               li.appendChild(anchor);
-                               anchor.textContent = subfolder.subFolderName;
-                               anchor.setAttribute('subFolderName',subfolder.subFolderName);
-                               anchor.setAttribute('folderNameOfSubFolder',subfolder.folderNameOfSubFolder);
-                               anchor.addEventListener("click", (e) => {
-                                 // dependency via module parameter
-                                   documentsList.show(e.target.getAttribute("subFolderName"),e.target.getAttribute("folderNameOfSubFolder")); // the list must know the details container
-                               }, false);
-                               anchor.href = "#";
-
-                              // anchor.appendChild(subfoldercell);
-                           });
-
-                  });
-
-              }
-
-        }
 
 }
 
 
-        function documentsList(_divCell){
+function ToDoSposta(nameDiv,massageDiv){
+	var self = this;
 
-            this.divContainer = _divCell;
-
-            this.show = function (subFolderName,folderNameOfSubFolder) {
-                var self = this;
-                makeCall("GET", "GetListDocuments?subFolderName=" + subFolderName+"&folderName="+folderNameOfSubFolder, null,
-                  function(req) {
-                          if (req.readyState === 4) {
-                            var message = req.responseText;
-                            if (req.status === 200) {
-                              self.update(JSON.parse(req.responseText)); // self visible by
-                              // closure
-                            } else {
-                              self.divContainer.textContent = message;
-                            }
-                          }
-                        })
-            }
-            
-
-            this.update = function(documentList){
-                p,li,documentCell,documentText, linkcell, anchorSposta;
-
-                if (documentList.length === 0) {
-                    divContainer.textContent = "No document yet!";
-                } else {
-                      var self = this;
-                      p = document.createElement("p");
-                      p.textContent = documentList[0].subFolderNameOfDocument;
-                      self.divContainer.appendChild(p);
-                      li =  document.createElement("ul");
-                      self.divContainer.appendChild(li);
-
-                      documentList.forEach(d => {
-
-                          documentCell = document.createElement("li");
-                          documentText = document.createElement("span");
-                          documentText.textContent = d.documentName;
-
-
-                          anchorSposta = document.createElement("a");
-                          anchorSposta.textContent = ">sposta"
-                          anchorSposta.setAttribute('documentid',d.id);
-                          anchorSposta.setAttribute('subfolderid',d.subfolderid);
-                          anchorSposta.addEventListener("click", (e) => {
-                            // dependency via module parameter
-                            choicesList.show(e.target.getAttribute("documentid"),e.target.getAttribute("subfolderid")); // the list must know the details container
-                          }, false);
-
-
-                          li.appendChild(documentCell);
-                          li.appendChild(documentText);
-                          li.appendChild(anchorSposta);
-                      });
-
+    this.show = function (fromDocumentName, fromSubFolderName, fromFolderName,toSubFolderName,toFolderNameOfSubFolder) {
+        makeCall("GET", "DoSposta?FromDocumentName=" + fromDocumentName
+            +"&FromSubFolderName="+fromSubFolderName
+            +"&FromFolderName="+fromFolderName
+            +"&ToSubFolderName="+toSubFolderName
+            +"&ToFolderName="+toFolderNameOfSubFolder, null,
+            function (req) {
+                if (req.readyState === 4) {
+                    var message = req.responseText;
+                    if (req.status === 200) {
+                        self.update();
+                    } else {
+                        massageDiv.textContent = message;
+                    }
                 }
-
-        }
-
-        this.reset = function() {
-             this.divContainer.style.visibility = "hidden";
-        }
-   }
+            })
+    }
 
 
-   function ChoicesList(  _messagecell){
-      this.messageCell = _messagecell;
-
-      this.show = function (documentid,subfolderid) {
-          if (typeof(Storage) !== "undefined") {
-             // Store
-          var subfolderList = JSON.parse(sessionStorage.getItem("subfolderList"));
-          var l = subfolderList.length,
-          row,li,foldercell,subfoldercell, linkcell, anchor;
-
-          if (l == 0) {
-              messageCell.textContent = "No folders yet!";
-            } else {
-                var self = this;
-                self.messageCell.innerHTML="";
-                subfolderList.forEach(list => {
-                row = document.createElement("p");
-                row.textContent = list[0].folderName;
-                    foldercell = document.createElement("ul");
-                   // foldercell.textContent = list[0].folderName;
-                    self.messageCell.appendChild(row);
-                    self.messageCell.appendChild(foldercell);
-
-                    list.forEach(subfolder =>{
-                             li = document.createElement("li");
-                             foldercell.appendChild(li);
-
-                             if (subfolder.id !== parseInt(subfolderid)){
-//                                 anchor = document.createElement("a");
-//                                 li.appendChild(anchor);
-//                                 anchor.textContent = subfolder.name;
-//                                 anchor.setAttribute('subfolderid', subfolder.id);
-
-                                 li.textContent = subfolder.name;
-                             }
-                             else {
-                                 li.textContent = subfolder.name;
-                                 li.setAttribute("class", "democlass");
-                             }
+    this.update = function(){
+        new FolderAndSubFolder(nameDiv,massageDiv).show();
+    }
 
 
-
-                            // anchor.appendChild(subfoldercell);
-                         });
-
-                });
-
-            }
-
-           } else {
-           self.messageCell.innerHTML = "Sorry, your browser does not support Web Storage...";
-          }
-
-      }
-
-
-
-      this.update = function(subfolderList,subfolderid){
-          var l = subfolderList.length,
-          row,li,foldercell,subfoldercell, linkcell, anchor;
-
-          if (l == 0) {
-              messageCell.textContent = "No folders yet!";
-            } else {
-                var self = this;
-                self.messageCell.innerHTML="";
-                subfolderList.forEach(list => {
-                row = document.createElement("p");
-                row.textContent = list[0].folderName;
-                    foldercell = document.createElement("ul");
-                   // foldercell.textContent = list[0].folderName;
-                    self.messageCell.appendChild(row);
-                    self.messageCell.appendChild(foldercell);
-
-                    list.forEach(subfolder =>{
-                             li = document.createElement("li");
-                             foldercell.appendChild(li);
-
-                             if (subfolder.id !== parseInt(subfolderid)){
-//                                 anchor = document.createElement("a");
-//                                 li.appendChild(anchor);
-//                                 anchor.textContent = subfolder.name;
-//                                 anchor.setAttribute('subfolderid', subfolder.id);
-
-                                 li.textContent = subfolder.name;
-                             }
-                             else {
-                                 li.textContent = subfolder.name;
-                                 li.setAttribute("class", "democlass");
-                             }
-
-
-
-                            // anchor.appendChild(subfoldercell);
-                         });
-
-                });
-
-            }
-
-      }
-
-
-
-   }
-
-
-   })();
+}
