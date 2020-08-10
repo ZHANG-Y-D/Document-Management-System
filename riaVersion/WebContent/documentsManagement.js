@@ -3,13 +3,14 @@
 
     var leftFolderDiv = document.getElementById("leftFolderDiv");
     var leftMassageDiv = document.getElementById("leftMassageDiv");
-    var leftTrashDiv = document.getElementById("leftTrashDiv");
 
     var rightSubFolderDiv = document.getElementById("rightSubFolderDiv");
     var rightDocumentDiv = document.getElementById("rightDocumentDiv");
     var rightMassageDiv = document.getElementById("rightMassageDiv");
-    var pageOrchestrator = new PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+    var detailsDiv = document.getElementById("detailsDiv");
 
+    var pageOrchestrator = new PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,detailsDiv);
+    var documentsList, detailsDocument ;
 
     window.addEventListener("load", () => {
           pageOrchestrator.start(); // initialize the components
@@ -18,27 +19,32 @@
 
 })();
 
+// TODO return abnormal message from server
+// TODO cestino
 // TODO accedi
+// TODO refresh
 // TODO CSS
 
 
-function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
+function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv, detailsDiv){
 
 
     this.start = function(){
 
-        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
+        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,detailsDiv).show();
         // choicesList = new ChoicesList(messageContainer);
-        documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
+        documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,detailsDiv);
+        detailsDocument = new DetailsDocument(detailsDiv);
     }
 
     this.refresh = function(){
-         documentsList.reset();
+        // documentsList.reset();
+        detailsDocument.reset();
     }
 
 }
 
-function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv) {
+function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv, detailsDiv) {
     var self = this;
     this.show = function () {
         makeCall("GET", "GetFoldersAndSubFolders", null,
@@ -47,8 +53,8 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
                     var message = req.responseText;
                     if (req.status === 200) {
                         self.update(JSON.parse(req.responseText)); // self visible by
+                        // closure
                     } else {
-                        leftMassageDiv.innerHTML = "";
                         leftMassageDiv.textContent = message;
                     }
                 }
@@ -58,26 +64,21 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
 
     this.update = function (subFolderList) {
 
-
-        leftFolderDiv.innerHTML="";
-        leftMassageDiv.innerHTML="";
-        leftTrashDiv.innerHTML = "";
-        rightSubFolderDiv.innerHTML="";
-        rightDocumentDiv.innerHTML="";
-        rightMassageDiv.innerHTML="";
-
+         leftFolderDiv.innerHTML="";
+         leftMassageDiv.innerHTML="";
+         rightSubFolderDiv.innerHTML="";
+         rightDocumentDiv.innerHTML="";
+         rightMassageDiv.innerHTML="";
 
         // Check browser support
         if (typeof (Storage) !== "undefined") {
             // Store
             sessionStorage.setItem("subFolderList", JSON.stringify(subFolderList));
         } else {
-            leftMassageDiv.innerHTML = "";
             leftMassageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
         }
 
         if (subFolderList.length === 0) {
-            leftFolderDiv.innerHTML = "";
             leftFolderDiv.textContent = "No folders yet!";
         } else {
             subFolderList.forEach(list => {
@@ -97,10 +98,9 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
                     anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
                     anchor.addEventListener("click", (e) => {
                         // dependency via module parameter
-
-                        var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
-
+                       // var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,detailsDiv);
                         documentsList.show(e.target.getAttribute("subFolderName"), e.target.getAttribute("folderNameOfSubFolder")); // the list must know the details container
+
                     }, false);
                     anchor.href = "#";
                 });
@@ -109,8 +109,9 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
     }
 }
 
-function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
+function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv, detailsDiv){
     var self = this;
+    detailsDiv.style.visibility = "hidden";
     this.show = function (subFolderName,folderNameOfSubFolder) {
         makeCall("GET", "GetListDocuments?subFolderName=" + subFolderName+"&folderName="+folderNameOfSubFolder, null,
           function(req) {
@@ -118,8 +119,9 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
                     var message = req.responseText;
                     if (req.status === 200) {
                       self.update(JSON.parse(req.responseText)); // self visible by
+                      // closure
+
                     } else {
-                        rightMassageDiv.innerHTML = "";
                         rightMassageDiv.textContent = message;
                     }
                   }
@@ -135,6 +137,8 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
             rightMassageDiv.style.visibility = "visible";
             rightMassageDiv.textContent = "No document yet!";
         } else {
+            sessionStorage.setItem("documentList", JSON.stringify(documentList)); //for details
+
             rightDocumentDiv.style.visibility = "visible";
             var p = document.createElement("p");
             p.textContent = documentList[0].subFolderNameOfDocument;
@@ -152,7 +156,7 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
                 anchorSposta.setAttribute('fromSubFolderName', d.subFolderNameOfDocument);
                 anchorSposta.setAttribute('fromFolderName', d.folderNameOfDocument);
 
-                var choicesList = new ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+                var choicesList = new ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
 
                 anchorSposta.addEventListener("click", (e) => {
                     // dependency via module parameter
@@ -171,10 +175,21 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
                         event.target.getAttribute("fromFolderName"));
 
                 }, false);
+                var anchorAccedi = document.createElement("a");
+                anchorAccedi.textContent = ">accedi";
+                anchorAccedi.setAttribute('selectedDocument', d.documentName);
+                anchorAccedi.addEventListener("click", (e) => {
+                    // dependency via module parameter
+                    detailsDiv.style.visibility = "hidden";
+                    detailsDocument.show(e.target.getAttribute("selectedDocument")); // the list must know the details container
+                }, false);
+
 
                 li.appendChild(documentCell);
                 li.appendChild(documentText);
+                li.appendChild(anchorAccedi);
                 li.appendChild(anchorSposta);
+                anchorAccedi.href = "#";
                 anchorSposta.href = "#";
             });
         }
@@ -188,7 +203,7 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
 }
 
 
-function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv) {
+function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv) {
     var self = this;
 
     this.show = function (fromDocumentName, fromSubFolderName, fromFolderName) {
@@ -198,7 +213,6 @@ function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumen
             self.update(fromDocumentName, fromSubFolderName, fromFolderName, subFolderList);
 
         } else {
-            leftMassageDiv.innerHTML = "";
             leftMassageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
         }
     }
@@ -224,23 +238,32 @@ function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumen
                 anchor.setAttribute('subFolderName', subfolder.subFolderName);
                 anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
 
-                var toDoSposta = new ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv)
+                var toDoSposta = new ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv)
                 anchor.addEventListener("click", (e) => {
                     toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
                                      e.target.getAttribute("subFolderName"),
                                      e.target.getAttribute("folderNameOfSubFolder"))
                 }, false);
 
+
+                // anchor.addEventListener("DOMContentLoaded", (e) => {
+                //     // Get the element by id
+                //     const element = document.getElementById("rightDocumentDiv");
+                //     // Add the ondragstart event listener
+                //     element.addEventListener("drop", drop_handler);
+                //     toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
+                //         e.target.getAttribute("subFolderName"),
+                //         e.target.getAttribute("folderNameOfSubFolder"))
+                // });
+
                 anchor.addEventListener("dragover", function(event) {
 
-                    event.preventDefault();
                     event.target.style.opacity = .3;
 
                 }, false);
 
                 anchor.addEventListener("dragleave", function(event) {
 
-                    event.preventDefault();
                     event.target.style.opacity = 1;
 
                 }, false);
@@ -249,6 +272,7 @@ function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumen
 
                     // prevent default action (open as link for some elements)
                     event.preventDefault();
+
 
                     toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
                         event.target.getAttribute("subFolderName"),
@@ -259,70 +283,15 @@ function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumen
                 anchor.href = "#";
             });
         });
+    }
 
-        leftTrashDiv.innerHTML = "";
-        var trash = document.createElement("p");
-        trash.textContent = "Trash";
-        trash.style.color = "tomato";
-        leftTrashDiv.appendChild(trash);
-        var moveDocuToTrash = new RemoveDocuToTrash(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
-        trash.addEventListener("click", () => {
-            moveDocuToTrash.show(fromDocumentName, fromSubFolderName, fromFolderName)
-        }, false);
+    this.refresh = function () {
 
-        trash.addEventListener("dragover", function(event)  {
-            event.preventDefault();
-            event.target.style.opacity = .3;
-        }, false);
-
-        trash.addEventListener("dragleave", function(event)  {
-            event.preventDefault();
-            event.target.style.opacity = 1;
-        }, false);
-
-        trash.addEventListener("drop", function(event)  {
-            console.log('DROP')
-            // prevent default action (open as link for some elements)
-            event.preventDefault();
-            moveDocuToTrash.show(fromDocumentName, fromSubFolderName, fromFolderName)
-        }, false);
     }
 }
 
 
-function RemoveDocuToTrash(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
-    var self = this;
-
-    this.show = function (documentName, subFolderName, folderName){
-        makeCall("GET", "RemoveDocument?DocumentName=" + documentName
-                                    +"&SubFolderName="+subFolderName
-                                    +"&FolderName="+folderName, null,
-            function (req) {
-                if (req.readyState === 4) {
-                    var message = req.responseText;
-                    if (req.status === 200) {
-                        self.refresh()
-                        self.update();
-                    } else {
-                        rightMassageDiv.innerHTML = "";
-                        rightMassageDiv.textContent = message;
-                    }
-                }
-            }
-        )
-    }
-
-    this.update = function (){
-        rightMassageDiv.textContent = "Remove successful!!!"
-    }
-
-    this.refresh = function (){
-        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
-    }
-}
-
-
-function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
+function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv){
 	var self = this;
 
     this.show = function (fromDocumentName, fromSubFolderName, fromFolderName,toSubFolderName,toFolderNameOfSubFolder) {
@@ -335,12 +304,10 @@ function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocument
                 if (req.readyState === 4) {
                     var message = req.responseText;
                     if (req.status === 200) {
+                        self.refresh();
 
-                        self.refresh()
-                        self.update();
 
                     } else {
-                        rightMassageDiv.innerHTML = "";
                         rightMassageDiv.textContent = message;
                     }
                 }
@@ -348,15 +315,50 @@ function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocument
         )
     }
 
-    this.update = function (){
-        rightMassageDiv.textContent = "Sposta successful!!!"
-    }
-
-    this.refresh = function (){
-        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
+    this.refresh = function(){
+        documentsList.show(toSubFolderName,toFolderNameOfSubFolder);
     }
 
 
 }
 
+function DetailsDocument(detailsDiv){
+   //this.detailsDiv = detailsDiv;
 
+    this.show=  function(selectedDocument){
+    	 detailsDiv.innerHTML="";
+        if (typeof (Storage) !== "undefined") {
+            var documents = JSON.parse(sessionStorage.getItem("documentList"));
+
+            documents.forEach(d => {
+                if(d.documentName === selectedDocument){
+                    detailsDiv.style.visibility = "visible";
+                    var rowName = document.createElement("p");
+                    rowName.textContent = d.documentName;
+                    var rowDate = document.createElement("p");
+                    rowDate.textContent = d.dateOfDocument;
+                    var rowSummary = document.createElement("p");
+                    rowSummary.textContent = d.summary;
+                    var rowType = document.createElement("p");
+                    rowType.textContent = d.type;
+
+                    detailsDiv.appendChild(rowName);
+                    detailsDiv.appendChild(rowDate);
+                    detailsDiv.appendChild(rowSummary);
+                    detailsDiv.appendChild(rowType);
+
+
+                }
+
+            });
+
+        } else {
+        	detailsDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
+        }
+    }
+
+    this.reset = function(){
+       detailsDiv.style.visibility = "hidden";
+    }
+
+}
