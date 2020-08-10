@@ -191,9 +191,9 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
                 }, false);
 
                 li.appendChild(documentCell);
-                li.appendChild(documentText);
-                li.appendChild(anchorAccedi);
-                li.appendChild(anchorSposta);
+                documentCell.appendChild(documentText);
+                documentCell.appendChild(anchorAccedi);
+                documentCell.appendChild(anchorSposta);
                 anchorSposta.href = "#";
                 anchorAccedi.href = "#";
 
