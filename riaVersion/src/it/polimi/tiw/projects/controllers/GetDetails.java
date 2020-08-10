@@ -70,8 +70,8 @@ public class GetDetails extends HttpServlet{
 //		} else {
 //			res.sendError(505, "Bad topic ID");
 //		}
-//		
-//	}
+		
+	}
 	
 	
 }

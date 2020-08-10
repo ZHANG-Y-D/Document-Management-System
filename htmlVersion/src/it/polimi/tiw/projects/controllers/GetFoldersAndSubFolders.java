@@ -105,7 +105,7 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 					
 					ctx.setVariable("fsubfolders", folderAndSubfolders);
 					if(documentName == null ||subFolderName == null ||folderName == null) path = "home.html";
-					else { 
+					else { //show folders to move
 						DocumentDAO dDao = new DocumentDAO(connection);
 						Document document = dDao.findDocument(documentName, subFolderName, folderName);
 						

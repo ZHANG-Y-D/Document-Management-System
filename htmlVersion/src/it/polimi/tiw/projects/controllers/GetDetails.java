@@ -62,67 +62,65 @@ public class GetDetails extends HttpServlet{
 		}
 	}
 	
-//	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-//		  
-//			String documentName = req.getParameter("DocumentName");
-//
-//			
-//			if (documentName != null ) {
-//				
-//				HttpSession session = req.getSession();
-//				List<Document> documents = (List<Document>) session.getAttribute("lastDocuments");
-//				if(documents == null)res.sendError(505, "no session");
-//				String path = "documentDetails.html";
-//				ServletContext servletContext = getServletContext();
-//				
-//				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
-//				
-//				for(Document d : documents) {
-//					if(d.getDocumentName()  == documentName) {
-//						ctx.setVariable("document", d);
-//						break;
-//					}
-//					
-//				}
-//				//ctx.setVariable("documents", documents);
-//				templateEngine.process(path, ctx, res.getWriter());
-//			} else {
-//				res.sendError(505, "Bad topic ID");
-//			}
-//			
-//		}
+	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		  
+			String documentName = req.getParameter("DocumentName");
+			HttpSession session = req.getSession();
+			
+			if (documentName != null ) {
+				
+				List<Document> documents = (List<Document>) session.getAttribute("lastDocuments");
+				
+				if(documents == null) {res.sendError(505, "no session");}
+				
+				ServletContext servletContext = getServletContext();	
+				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+				
+				for(Document d : documents) {
+					if(d.getDocumentName()  == documentName) {
+						ctx.setVariable("document", d);
+						break;
+					}
+					
+				}
+				//ctx.setVariable("documents", documents);
+				String path = "documentDetails.html";
+				templateEngine.process(path, ctx, res.getWriter());
+			} else {
+				res.sendError(505, "Bad topic ID");
+			}
+			
+		}
 		
 
 	
 	
 	
 	
-	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		HttpSession session = req.getSession();
-		String documentName = req.getParameter("DocumentName");
-		String subFolderName = req.getParameter("SubFolderName");
-		String folderName = req.getParameter("FolderName");
-		
-		if (documentName != null &&
-				subFolderName != null &&
-						folderName != null) {
-			DocumentDAO dDao = new DocumentDAO(connection);
-			Document document;
-			try {
-				document = dDao.findDocument(documentName,subFolderName,folderName);
-				String path = "documentDetails.html";
-				ServletContext servletContext = getServletContext();
-				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
-				ctx.setVariable("document", document);
-				templateEngine.process(path, ctx, res.getWriter());
-				
-			} catch ( SQLException e ) {
-				res.sendError(500, "Database access failed");
-			}
-		} else {
-			res.sendError(505, "Bad topic ID");
-		}
-		
-	}
+//	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+//		
+//		String documentName = req.getParameter("DocumentName");
+//		String subFolderName = req.getParameter("SubFolderName");
+//		String folderName = req.getParameter("FolderName");
+//		
+//		if (documentName != null && subFolderName != null && folderName != null) {
+//			DocumentDAO dDao = new DocumentDAO(connection);
+//			Document document;
+//			try {
+//				document = dDao.findDocument(documentName,subFolderName,folderName);
+//				String path = "documentDetails.html";
+//				ServletContext servletContext = getServletContext();
+//				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+//				ctx.setVariable("document", document);
+//				templateEngine.process(path, ctx, res.getWriter());
+//				
+//			} catch ( SQLException e ) {
+//				res.sendError(500, "Database access failed");
+//			}
+//		} else {
+//			res.sendError(505, "Bad topic ID");
+//		}
+//		
+//	}
 	
 }

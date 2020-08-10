@@ -61,11 +61,10 @@ public class GetListDocuments extends HttpServlet{
 	
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		
 		String subfolderName = req.getParameter("SubFolderName");
 		String folderName = req.getParameter("FolderName");
 		HttpSession session = req.getSession(); 
-		
-		
 		
 		
 		if (subfolderName != null) {
@@ -77,6 +76,7 @@ public class GetListDocuments extends HttpServlet{
 				
 				subfolder = fDao.findSubFolderBySubFoldAndFolderName(subfolderName,folderName);
 			    documents = dDao.findAllDocumentsBySubFolderAndFolderName(subfolderName,folderName);
+			    
 			    session.setAttribute("lastDocuments", documents);
 				
 				String path = "documents.html";

@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-        <h1>Stai spostando il documento X dalla sottocartella Y. Scegli la sottocartella di destinazione</h1>
+        <h1>Stai spostando il documento <span th:text=${document.DocumentName}>X</span> dalla sottocartella <span th:text=${document.subFolderName}>Y</span>. Scegli la sottocartella di destinazione</h1>
         
         <div th:each="folder : ${folders}">
                 <p th:text= ${folder.FolderName}>folder</p>
@@ -20,7 +20,8 @@
 					         
 	                        
 					    </ul>
-                                
+                        <a th:href="@{/GetFoldersAndSubFolders}">Go folders</a>
+                               
         </div>
 </body>
 </html>

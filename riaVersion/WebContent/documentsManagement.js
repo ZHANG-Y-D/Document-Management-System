@@ -8,8 +8,8 @@
     var rightSubFolderDiv = document.getElementById("rightSubFolderDiv");
     var rightDocumentDiv = document.getElementById("rightDocumentDiv");
     var rightMassageDiv = document.getElementById("rightMassageDiv");
-
     var pageOrchestrator = new PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+
 
     window.addEventListener("load", () => {
           pageOrchestrator.start(); // initialize the components
@@ -35,10 +35,12 @@ function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDo
     this.start = function(){
 
         new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
+
+        documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
     }
 
     this.refresh = function(){
-        // documentsList.reset();
+         documentsList.reset();
     }
 
 }
@@ -63,12 +65,14 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
 
     this.update = function (subFolderList) {
 
+
         leftFolderDiv.innerHTML="";
         leftMassageDiv.innerHTML="";
         leftTrashDiv.innerHTML = "";
         rightSubFolderDiv.innerHTML="";
         rightDocumentDiv.innerHTML="";
         rightMassageDiv.innerHTML="";
+
 
         // Check browser support
         if (typeof (Storage) !== "undefined") {
@@ -100,7 +104,9 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
                     anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
                     anchor.addEventListener("click", (e) => {
                         // dependency via module parameter
+
                         var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+
                         documentsList.show(e.target.getAttribute("subFolderName"), e.target.getAttribute("folderNameOfSubFolder")); // the list must know the details container
                     }, false);
                     anchor.href = "#";
@@ -128,16 +134,15 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
     }
 
     this.update = function(documentList){
-
         rightSubFolderDiv.innerHTML="";
         rightDocumentDiv.innerHTML="";
         rightMassageDiv.innerHTML="";
 
-
         if (documentList.length === 0) {
+            rightMassageDiv.style.visibility = "visible";
             rightMassageDiv.textContent = "No document yet!";
         } else {
-
+            rightDocumentDiv.style.visibility = "visible";
             var p = document.createElement("p");
             p.textContent = documentList[0].subFolderNameOfDocument;
             rightSubFolderDiv.appendChild(p);
@@ -183,6 +188,8 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
     }
 
     this.refresh = function() {
+        rightDocumentDiv.style.visibility = "hidden";
+        rightMassageDiv.style.visibility = "hidden";
 
     }
 }
@@ -335,8 +342,10 @@ function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocument
                 if (req.readyState === 4) {
                     var message = req.responseText;
                     if (req.status === 200) {
+
                         self.refresh()
                         self.update();
+
                     } else {
                         rightMassageDiv.innerHTML = "";
                         rightMassageDiv.textContent = message;
@@ -354,5 +363,7 @@ function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocument
         new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
     }
 
+
 }
+
 
