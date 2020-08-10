@@ -22,8 +22,12 @@
 // TODO return abnormal message from server
 // TODO cestino
 // TODO accedi
-// TODO refresh
 // TODO CSS
+//TODO html
+// TODO PageOrchestrator
+// TODO logout
+// TODO refresh sposta
+
 
 
 function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv, detailsDiv){
@@ -31,10 +35,15 @@ function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDo
 
     this.start = function(){
 
-        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,detailsDiv).show();
-        // choicesList = new ChoicesList(messageContainer);
-        documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,detailsDiv);
-        detailsDocument = new DetailsDocument(detailsDiv);
+//        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,detailsDiv).show();
+//        // choicesList = new ChoicesList(messageContainer);
+//        documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,detailsDiv);
+//        detailsDocument = new DetailsDocument(detailsDiv);
+
+        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
+
+        documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
+
     }
 
     this.refresh = function(){
