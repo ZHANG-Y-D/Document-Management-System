@@ -3,12 +3,13 @@
 
     var leftFolderDiv = document.getElementById("leftFolderDiv");
     var leftMassageDiv = document.getElementById("leftMassageDiv");
+    var leftTrashDiv = document.getElementById("leftTrashDiv");
 
     var rightSubFolderDiv = document.getElementById("rightSubFolderDiv");
     var rightDocumentDiv = document.getElementById("rightDocumentDiv");
     var rightMassageDiv = document.getElementById("rightMassageDiv");
-    var pageOrchestrator = new PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
-    var documentsList
+    var pageOrchestrator = new PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+
 
     window.addEventListener("load", () => {
           pageOrchestrator.start(); // initialize the components
@@ -17,19 +18,16 @@
 
 })();
 
-// TODO return abnormal message from server
-// TODO cestino
 // TODO accedi
-// TODO refresh
 // TODO CSS
 
 
-function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv){
+function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
 
 
     this.start = function(){
 
-        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv).show();
+        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
         // choicesList = new ChoicesList(messageContainer);
         documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
     }
@@ -40,7 +38,7 @@ function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDo
 
 }
 
-function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv) {
+function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv) {
     var self = this;
     this.show = function () {
         makeCall("GET", "GetFoldersAndSubFolders", null,
@@ -49,8 +47,8 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
                     var message = req.responseText;
                     if (req.status === 200) {
                         self.update(JSON.parse(req.responseText)); // self visible by
-                        // closure
                     } else {
+                        leftMassageDiv.innerHTML = "";
                         leftMassageDiv.textContent = message;
                     }
                 }
@@ -60,21 +58,26 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
 
     this.update = function (subFolderList) {
 
-         leftFolderDiv.innerHTML="";
-         leftMassageDiv.innerHTML="";
-         rightSubFolderDiv.innerHTML="";
-         rightDocumentDiv.innerHTML="";
-         rightMassageDiv.innerHTML="";
+
+        leftFolderDiv.innerHTML="";
+        leftMassageDiv.innerHTML="";
+        leftTrashDiv.innerHTML = "";
+        rightSubFolderDiv.innerHTML="";
+        rightDocumentDiv.innerHTML="";
+        rightMassageDiv.innerHTML="";
+
 
         // Check browser support
         if (typeof (Storage) !== "undefined") {
             // Store
             sessionStorage.setItem("subFolderList", JSON.stringify(subFolderList));
         } else {
+            leftMassageDiv.innerHTML = "";
             leftMassageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
         }
 
         if (subFolderList.length === 0) {
+            leftFolderDiv.innerHTML = "";
             leftFolderDiv.textContent = "No folders yet!";
         } else {
             subFolderList.forEach(list => {
@@ -94,7 +97,9 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
                     anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
                     anchor.addEventListener("click", (e) => {
                         // dependency via module parameter
-                    //-var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
+
+                        var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+
                         documentsList.show(e.target.getAttribute("subFolderName"), e.target.getAttribute("folderNameOfSubFolder")); // the list must know the details container
                     }, false);
                     anchor.href = "#";
@@ -104,7 +109,7 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
     }
 }
 
-function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv){
+function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
     var self = this;
     this.show = function (subFolderName,folderNameOfSubFolder) {
         makeCall("GET", "GetListDocuments?subFolderName=" + subFolderName+"&folderName="+folderNameOfSubFolder, null,
@@ -113,8 +118,8 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
                     var message = req.responseText;
                     if (req.status === 200) {
                       self.update(JSON.parse(req.responseText)); // self visible by
-                      // closure
                     } else {
+                        rightMassageDiv.innerHTML = "";
                         rightMassageDiv.textContent = message;
                     }
                   }
@@ -147,7 +152,7 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
                 anchorSposta.setAttribute('fromSubFolderName', d.subFolderNameOfDocument);
                 anchorSposta.setAttribute('fromFolderName', d.folderNameOfDocument);
 
-                var choicesList = new ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
+                var choicesList = new ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
 
                 anchorSposta.addEventListener("click", (e) => {
                     // dependency via module parameter
@@ -183,7 +188,7 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
 }
 
 
-function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv) {
+function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv) {
     var self = this;
 
     this.show = function (fromDocumentName, fromSubFolderName, fromFolderName) {
@@ -193,6 +198,7 @@ function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumen
             self.update(fromDocumentName, fromSubFolderName, fromFolderName, subFolderList);
 
         } else {
+            leftMassageDiv.innerHTML = "";
             leftMassageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
         }
     }
@@ -218,32 +224,23 @@ function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumen
                 anchor.setAttribute('subFolderName', subfolder.subFolderName);
                 anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
 
-                var toDoSposta = new ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv)
+                var toDoSposta = new ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv)
                 anchor.addEventListener("click", (e) => {
                     toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
                                      e.target.getAttribute("subFolderName"),
                                      e.target.getAttribute("folderNameOfSubFolder"))
                 }, false);
 
-
-                // anchor.addEventListener("DOMContentLoaded", (e) => {
-                //     // Get the element by id
-                //     const element = document.getElementById("rightDocumentDiv");
-                //     // Add the ondragstart event listener
-                //     element.addEventListener("drop", drop_handler);
-                //     toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
-                //         e.target.getAttribute("subFolderName"),
-                //         e.target.getAttribute("folderNameOfSubFolder"))
-                // });
-
                 anchor.addEventListener("dragover", function(event) {
 
+                    event.preventDefault();
                     event.target.style.opacity = .3;
 
                 }, false);
 
                 anchor.addEventListener("dragleave", function(event) {
 
+                    event.preventDefault();
                     event.target.style.opacity = 1;
 
                 }, false);
@@ -252,7 +249,6 @@ function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumen
 
                     // prevent default action (open as link for some elements)
                     event.preventDefault();
-
 
                     toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
                         event.target.getAttribute("subFolderName"),
@@ -263,15 +259,70 @@ function ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumen
                 anchor.href = "#";
             });
         });
-    }
 
-    this.refresh = function () {
+        leftTrashDiv.innerHTML = "";
+        var trash = document.createElement("p");
+        trash.textContent = "Trash";
+        trash.style.color = "tomato";
+        leftTrashDiv.appendChild(trash);
+        var moveDocuToTrash = new RemoveDocuToTrash(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+        trash.addEventListener("click", () => {
+            moveDocuToTrash.show(fromDocumentName, fromSubFolderName, fromFolderName)
+        }, false);
 
+        trash.addEventListener("dragover", function(event)  {
+            event.preventDefault();
+            event.target.style.opacity = .3;
+        }, false);
+
+        trash.addEventListener("dragleave", function(event)  {
+            event.preventDefault();
+            event.target.style.opacity = 1;
+        }, false);
+
+        trash.addEventListener("drop", function(event)  {
+            console.log('DROP')
+            // prevent default action (open as link for some elements)
+            event.preventDefault();
+            moveDocuToTrash.show(fromDocumentName, fromSubFolderName, fromFolderName)
+        }, false);
     }
 }
 
 
-function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv){
+function RemoveDocuToTrash(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
+    var self = this;
+
+    this.show = function (documentName, subFolderName, folderName){
+        makeCall("GET", "RemoveDocument?DocumentName=" + documentName
+                                    +"&SubFolderName="+subFolderName
+                                    +"&FolderName="+folderName, null,
+            function (req) {
+                if (req.readyState === 4) {
+                    var message = req.responseText;
+                    if (req.status === 200) {
+                        self.refresh()
+                        self.update();
+                    } else {
+                        rightMassageDiv.innerHTML = "";
+                        rightMassageDiv.textContent = message;
+                    }
+                }
+            }
+        )
+    }
+
+    this.update = function (){
+        rightMassageDiv.textContent = "Remove successful!!!"
+    }
+
+    this.refresh = function (){
+        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
+    }
+}
+
+
+function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
 	var self = this;
 
     this.show = function (fromDocumentName, fromSubFolderName, fromFolderName,toSubFolderName,toFolderNameOfSubFolder) {
@@ -284,10 +335,12 @@ function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocument
                 if (req.readyState === 4) {
                     var message = req.responseText;
                     if (req.status === 200) {
-                        //self.refresh();
-                        documentsList.show(toSubFolderName,toFolderNameOfSubFolder);
+
+                        self.refresh()
+                        self.update();
 
                     } else {
+                        rightMassageDiv.innerHTML = "";
                         rightMassageDiv.textContent = message;
                     }
                 }
@@ -295,9 +348,15 @@ function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocument
         )
     }
 
-    this.refresh = function(){
-        location.reload();
+    this.update = function (){
+        rightMassageDiv.textContent = "Sposta successful!!!"
     }
 
-    
+    this.refresh = function (){
+        new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
+    }
+
+
 }
+
+

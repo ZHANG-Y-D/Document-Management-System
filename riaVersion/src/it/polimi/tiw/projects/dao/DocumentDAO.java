@@ -141,6 +141,28 @@ public class DocumentDAO {
 		
 	}
 	
+	public void removeDocument(String documentName,String subFolderName,String folderName) throws SQLException {
+		
+		PreparedStatement pstatement = null;
+		try {
+			
+			String query = "DELETE FROM Document WHERE DocumentName = ? and SubFolderName = ? and FolderName = ?";
+			pstatement = con.prepareStatement(query);
+			pstatement.setString(1, documentName);
+			pstatement.setString(2, subFolderName);
+			pstatement.setString(3, folderName);
+			pstatement.executeUpdate();
+		} catch (SQLException e) {
+				
+			
+		}finally {
+			try {
+				pstatement.close();
+			} catch (Exception e1) {
+
+			}
+		}
+	}
 
 	
 	

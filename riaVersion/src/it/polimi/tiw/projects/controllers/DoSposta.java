@@ -72,11 +72,13 @@ public class DoSposta extends HttpServlet {
 					toSubFolder.add(0, newName);
 				}
 				dDao.moveDocument(fromDocument, toSubFolder);
+				response.setStatus(HttpServletResponse.SC_OK);
 			} catch ( SQLException e ) {
-//				res.sendError(500, "Database access failed");
-			}
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().println("Database access failed");			}
 		} else {
-//			res.sendError(505, "Bad topic ID");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Bad topic ID");
 		}
 	}
 	
