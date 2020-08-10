@@ -19,7 +19,14 @@
 })();
 
 // TODO accedi
+
+
 // TODO CSS
+//TODO html
+// TODO PageOrchestrator
+// TODO logout
+// TODO refresh sposta
+
 
 
 function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
@@ -28,7 +35,6 @@ function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDo
     this.start = function(){
 
         new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv).show();
-        // choicesList = new ChoicesList(messageContainer);
     }
 
     this.refresh = function(){
