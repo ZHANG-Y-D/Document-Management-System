@@ -8,12 +8,13 @@
     var rightDocumentDiv = document.getElementById("rightDocumentDiv");
     var rightMassageDiv = document.getElementById("rightMassageDiv");
     var pageOrchestrator = new PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
+    var documentsList
 
     window.addEventListener("load", () => {
           pageOrchestrator.start(); // initialize the components
           // pageOrchestrator.refresh(); // display initial content
       }, false);
-    
+
 })();
 
 // TODO return abnormal message from server
@@ -30,10 +31,11 @@ function PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDo
 
         new FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv).show();
         // choicesList = new ChoicesList(messageContainer);
+        documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
     }
 
     this.refresh = function(){
-        // documentsList.reset();
+         documentsList.reset();
     }
 
 }
@@ -60,8 +62,8 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
 
          leftFolderDiv.innerHTML="";
          leftMassageDiv.innerHTML="";
-        rightSubFolderDiv.innerHTML="";
-        rightDocumentDiv.innerHTML="";
+         rightSubFolderDiv.innerHTML="";
+         rightDocumentDiv.innerHTML="";
          rightMassageDiv.innerHTML="";
 
         // Check browser support
@@ -92,7 +94,7 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
                     anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
                     anchor.addEventListener("click", (e) => {
                         // dependency via module parameter
-                        var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
+                    //-var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv);
                         documentsList.show(e.target.getAttribute("subFolderName"), e.target.getAttribute("folderNameOfSubFolder")); // the list must know the details container
                     }, false);
                     anchor.href = "#";
@@ -120,16 +122,15 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
     }
 
     this.update = function(documentList){
-
         rightSubFolderDiv.innerHTML="";
         rightDocumentDiv.innerHTML="";
         rightMassageDiv.innerHTML="";
 
-
         if (documentList.length === 0) {
+            rightMassageDiv.style.visibility = "visible";
             rightMassageDiv.textContent = "No document yet!";
         } else {
-
+            rightDocumentDiv.style.visibility = "visible";
             var p = document.createElement("p");
             p.textContent = documentList[0].subFolderNameOfDocument;
             rightSubFolderDiv.appendChild(p);
@@ -175,6 +176,8 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
     }
 
     this.refresh = function() {
+        rightDocumentDiv.style.visibility = "hidden";
+        rightMassageDiv.style.visibility = "hidden";
 
     }
 }
@@ -281,7 +284,9 @@ function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocument
                 if (req.readyState === 4) {
                     var message = req.responseText;
                     if (req.status === 200) {
-                        self.refresh();
+                        //self.refresh();
+                        documentsList.show(toSubFolderName,toFolderNameOfSubFolder);
+
                     } else {
                         rightMassageDiv.textContent = message;
                     }
@@ -293,4 +298,6 @@ function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocument
     this.refresh = function(){
         location.reload();
     }
+
+    
 }

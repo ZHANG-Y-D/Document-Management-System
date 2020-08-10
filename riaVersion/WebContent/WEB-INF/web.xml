@@ -19,7 +19,7 @@
   </context-param>
   
   <welcome-file-list>
-    <welcome-file>home.html</welcome-file>
+    <welcome-file>loginPage.html</welcome-file>
   </welcome-file-list>
   
 
