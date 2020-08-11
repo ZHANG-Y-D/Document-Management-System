@@ -5,7 +5,8 @@
     var rightDocumentDiv = document.getElementById("rightDocumentDiv");
     var massageDiv = document.getElementById("MassageDiv");
     var detailsDiv =  document.getElementById("detailsDiv");
-    
+    var trashIcon = document.getElementById("trash");
+
     var username =  document.getElementById("username")
     var pageOrchestrator = new PageOrchestrator();
 
@@ -49,6 +50,8 @@
             leftTrashDiv.innerHTML = "";
             rightDocumentDiv.innerHTML="";
             detailsDiv.innerText="";
+            //messageDiv.style.visibility = "hidden";
+
         }
 
     }
@@ -73,6 +76,8 @@
 
 
         this.update = function (subFolderList) {
+            leftFolderDiv.innerHTML ="";
+            trashIcon.style.visibility = "hidden";
 
             // Check browser support
             if (typeof (Storage) !== "undefined") {
@@ -88,7 +93,15 @@
                 leftFolderDiv.textContent = "No folders yet!";
             } else {
                 subFolderList.forEach(list => {
-                    var row = document.createElement("p");
+                    var row = document.createElement("span");
+                    row.classList.add("folderName");
+
+                    var ext = document.createElement("span");
+                    var iconfolder = document.createElement("div");
+                    iconfolder.classList.add("folder");
+                    leftFolderDiv.appendChild(ext);
+                    ext.appendChild(iconfolder);
+
                     row.textContent = list[0].folderNameOfSubFolder;
                     var folderCell = document.createElement("ul");
                     leftFolderDiv.appendChild(row);
@@ -98,6 +111,7 @@
                         var li = document.createElement("li");
                         folderCell.appendChild(li);
                         var anchor = document.createElement("a");
+                        anchor.classList.add("folderButton");
                         li.appendChild(anchor);
                         anchor.textContent = subfolder.subFolderName;
                         anchor.setAttribute('subFolderName', subfolder.subFolderName);
@@ -136,6 +150,7 @@
             rightDocumentDiv.innerHTML="";
             // massageDiv.innerHTML="";
             detailsDiv.innerHTML="";
+            massageDiv.innerHTML="";
 
             if (documentList.length === 0) {
                 massageDiv.style.visibility = "visible";
@@ -143,8 +158,17 @@
             } else {
                 sessionStorage.setItem("documentList", JSON.stringify(documentList)); //for details
                 rightDocumentDiv.style.visibility = "visible";
-                var p = document.createElement("p");
+
+                var ext = document.createElement("span");
+                var iconfolder = document.createElement("div");
+                iconfolder.classList.add("folder");
+                rightDocumentDiv.appendChild(ext);
+                ext.appendChild(iconfolder);
+
+
+                var p = document.createElement("span");
                 p.textContent = documentList[0].subFolderNameOfDocument;
+                p.classList.add("folderName");
                 rightDocumentDiv.appendChild(p);
                 var li = document.createElement("ul");
                 rightDocumentDiv.appendChild(li);
@@ -153,10 +177,18 @@
                     var documentCell = document.createElement("li");
                     var documentText = document.createElement("span");
                     documentText.textContent = d.documentName;
+                    documentText.classList.add("folderName");
+
+                    var ext1 = document.createElement("span");
+                    var iconfile = document.createElement("div");
+                    iconfile.classList.add("file");
+
+                    ext1.appendChild(iconfile);
 
                     // Accedi
                     var anchorAccedi = document.createElement("a");
-                    anchorAccedi.textContent = ">accedi";
+                    anchorAccedi.textContent = "accedi";
+                    anchorAccedi.classList.add("button");
                     anchorAccedi.setAttribute('selectedDocument', d.documentName);
 
                     anchorAccedi.addEventListener("click", (e) => {
@@ -166,7 +198,8 @@
 
 
                     var anchorSposta = document.createElement("a");
-                    anchorSposta.textContent = ">sposta"
+                    anchorSposta.textContent = "sposta";
+                    anchorSposta.classList.add("button");
                     anchorSposta.setAttribute('fromDocumentName', d.documentName);
                     anchorSposta.setAttribute('fromSubFolderName', d.subFolderNameOfDocument);
                     anchorSposta.setAttribute('fromFolderName', d.folderNameOfDocument);
@@ -191,6 +224,7 @@
 
 
                     li.appendChild(documentCell);
+                    documentCell.appendChild(ext1);
                     documentCell.appendChild(documentText);
                     documentCell.appendChild(anchorAccedi);
                     documentCell.appendChild(anchorSposta);
@@ -213,7 +247,7 @@
         //this.detailsDiv = detailsDiv;
 
         this.show = function(selectedDocument){
-
+             massageDiv.innerHTML="";
             if (typeof (Storage) !== "undefined") {
                 var documents = JSON.parse(sessionStorage.getItem("documentList"));
 
@@ -222,13 +256,13 @@
                         //detailsDiv.style.visibility = "visible";
                         detailsDiv.innerHTML="";
                         var rowName = document.createElement("p");
-                        rowName.textContent = d.documentName;
+                        rowName.textContent ="Nome: " + d.documentName;
                         var rowDate = document.createElement("p");
-                        rowDate.textContent = d.dateOfDocument;
+                        rowDate.textContent ="Data: " + d.dateOfDocument;
                         var rowSummary = document.createElement("p");
-                        rowSummary.textContent = d.summaryOfDocument;
+                        rowSummary.textContent = "Sommario: " + d.summaryOfDocument;
                         var rowType = document.createElement("p");
-                        rowType.textContent = d.typeOfDocument;
+                        rowType.textContent = "Tipo: " + d.typeOfDocument;
 
                         detailsDiv.appendChild(rowName);
                         detailsDiv.appendChild(rowDate);
@@ -263,12 +297,22 @@
 
 
         this.update = function (fromDocumentName, fromSubFolderName, fromFolderName, subFolderList) {
-
+            trashIcon.style.visibility = "visible";
             leftFolderDiv.innerHTML="";
             massageDiv.innerHTML="";
 
             subFolderList.forEach(list => {
-                var row = document.createElement("p");
+                var row = document.createElement("span");
+                row.classList.add("folderName");
+
+                var ext = document.createElement("span");
+                var iconfolder = document.createElement("div");
+                iconfolder.classList.add("folder");
+                leftFolderDiv.appendChild(ext);
+                ext.appendChild(iconfolder);
+
+
+
                 row.textContent = list[0].folderNameOfSubFolder;
                 var folderCell = document.createElement("ul");
                 leftFolderDiv.appendChild(row);
@@ -276,50 +320,64 @@
                 list.forEach(subfolder => {
                     var li = document.createElement("li");
                     folderCell.appendChild(li);
-                    var anchor = document.createElement("a");
-                    li.appendChild(anchor);
-                    anchor.textContent = subfolder.subFolderName;
-                    anchor.setAttribute('subFolderName', subfolder.subFolderName);
-                    anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
 
 
-                    anchor.addEventListener("click", (e) => {
-                        toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
-                                         e.target.getAttribute("subFolderName"),
-                                         e.target.getAttribute("folderNameOfSubFolder"))
-                    }, false);
+                    if(subfolder.subFolderName !== fromSubFolderName){
+                        var anchor = document.createElement("a");
+                        anchor.classList.add("folderButton");
+                        li.appendChild(anchor);
+                        anchor.textContent = subfolder.subFolderName;
+                        anchor.setAttribute('subFolderName', subfolder.subFolderName);
+                        anchor.setAttribute('folderNameOfSubFolder', subfolder.folderNameOfSubFolder);
 
-                    anchor.addEventListener("dragover", function(event) {
+                                            anchor.addEventListener("click", (e) => {
+                                                toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
+                                                                 e.target.getAttribute("subFolderName"),
+                                                                 e.target.getAttribute("folderNameOfSubFolder"))
+                                            }, false);
 
-                        event.preventDefault();
-                        event.target.style.opacity = .3;
+                                            anchor.addEventListener("dragover", function(event) {
 
-                    }, false);
+                                                event.preventDefault();
+                                                event.target.style.opacity = .3;
 
-                    anchor.addEventListener("dragleave", function(event) {
+                                            }, false);
 
-                        event.preventDefault();
-                        event.target.style.opacity = 1;
+                                            anchor.addEventListener("dragleave", function(event) {
 
-                    }, false);
+                                                event.preventDefault();
+                                                event.target.style.opacity = 1;
 
-                    anchor.addEventListener("drop", function(event) {
+                                            }, false);
 
-                        // prevent default action (open as link for some elements)
-                        event.preventDefault();
+                                            anchor.addEventListener("drop", function(event) {
 
-                        toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
-                            event.target.getAttribute("subFolderName"),
-                            event.target.getAttribute("folderNameOfSubFolder"))
+                                                // prevent default action (open as link for some elements)
+                                                event.preventDefault();
 
-                    }, false);
+                                                toDoSposta.show(fromDocumentName, fromSubFolderName, fromFolderName,
+                                                    event.target.getAttribute("subFolderName"),
+                                                    event.target.getAttribute("folderNameOfSubFolder"))
 
-                    anchor.href = "#";
+                                            }, false);
+
+                                            anchor.href = "#";
+
+                    }else {
+                        var originfolder = document.createElement("span");
+                        originfolder.textContent = subfolder.subFolderName;
+                        originfolder.id = "originSubfolder"
+                        li.appendChild(originfolder);
+                    }
+
+
                 });
             });
 
+            leftTrashDiv.style.visibility = "visible";
             leftTrashDiv.innerHTML = "";
             var trash = document.createElement("p");
+
             trash.textContent = "Trash";
             trash.style.color = "tomato";
             leftTrashDiv.appendChild(trash);
@@ -379,6 +437,7 @@
 
         this.refresh = function (toSubFolderName,toFolderNameOfSubFolder){
             documentsList.show(toSubFolderName,toFolderNameOfSubFolder);
+            folderAndSubFolder.show();
         }
     }
 
@@ -405,12 +464,16 @@
         }
 
         this.update = function (){
+            messageDiv.style.visibility = "visible";
             massageDiv.innerHTML = "";
             massageDiv.textContent = "Remove successful!!!"
         }
 
         this.refresh = function (subFolderName, folderName){
+            leftTrashDiv.style.visibility = "hidden";
+            trashIcon.style.visibility = "hidden";
             documentsList.show(subFolderName, folderName);
+            folderAndSubFolder.show();
         }
     }
 
