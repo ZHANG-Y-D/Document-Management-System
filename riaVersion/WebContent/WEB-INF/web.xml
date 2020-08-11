@@ -24,7 +24,7 @@
   
 
 
- <!-- <filter> 
+<filter>
       <filter-name>LoginChecker</filter-name>
       <filter-class>it.polimi.tiw.projects.filters.LoginChecker</filter-class> 
   </filter> 
@@ -40,15 +40,12 @@
  <filter-mapping> 
     <filter-name>LoginChecker</filter-name> 
     <url-pattern>/home.html</url-pattern>   
-    <url-pattern>/GetDetails</url-pattern>
-    <url-pattern>/GetChoices</url-pattern>
+    <url-pattern>/DoSposta</url-pattern>
     <url-pattern>/GetFoldersAndSubFolders</url-pattern>
     <url-pattern>/GetListDocuments</url-pattern>
+    <url-pattern>/RemoveDocument</url-pattern>
     <url-pattern>/Logout</url-pattern>
     
- </filter-mapping>  -->
+ </filter-mapping>
 
-
- 
- 
 </web-app>

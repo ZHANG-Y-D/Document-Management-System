@@ -8,8 +8,8 @@ public class Document {
 	private String subFolderNameOfDocument;
 	private String folderNameOfDocument;
 	private Date dateOfDocument;
-	private String summary;
-	private String type;
+	private String summaryOfDocument;
+	private String typeOfDocument;
 	
 	
 	public String getDocumentName() {
@@ -41,11 +41,11 @@ public class Document {
 	}
 	
 	public String getSummary() {
-		return summary;
+		return summaryOfDocument;
 	}
 	
 	public String getType() {
-		return type;
+		return typeOfDocument;
 	}
 	
 	
@@ -55,11 +55,11 @@ public class Document {
 	
 	
 	public void setType (String t) {
-		type = t;
+		typeOfDocument = t;
 	}
 	
 	public void setSummery(String s) {
-		summary = s;
+		summaryOfDocument = s;
 	}
 
 }
