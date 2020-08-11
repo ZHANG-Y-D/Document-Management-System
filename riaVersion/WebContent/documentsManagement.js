@@ -1,12 +1,11 @@
 (function(){
 
     var leftFolderDiv = document.getElementById("leftFolderDiv");
-    var leftMassageDiv = document.getElementById("leftMassageDiv");
     var leftTrashDiv = document.getElementById("leftTrashDiv");
-
     var rightDocumentDiv = document.getElementById("rightDocumentDiv");
-    var rightMassageDiv = document.getElementById("rightMassageDiv");
+    var massageDiv = document.getElementById("MassageDiv");
     var detailsDiv =  document.getElementById("detailsDiv");
+    
     var username =  document.getElementById("username")
     var pageOrchestrator = new PageOrchestrator();
 
@@ -46,10 +45,9 @@
 
         this.refresh = function(){
             leftFolderDiv.innerHTML="";
-            leftMassageDiv.innerHTML="";
+            massageDiv.innerHTML="";
             leftTrashDiv.innerHTML = "";
             rightDocumentDiv.innerHTML="";
-            rightMassageDiv.innerHTML="";
             detailsDiv.innerText="";
         }
 
@@ -66,8 +64,8 @@
                         if (req.status === 200) {
                             self.update(JSON.parse(req.responseText));
                         } else {
-                            leftMassageDiv.innerHTML = "";
-                            leftMassageDiv.textContent = message;
+                            massageDiv.innerHTML = "";
+                            massageDiv.textContent = message;
                         }
                     }
                 })
@@ -81,8 +79,8 @@
                 // Store
                 sessionStorage.setItem("subFolderList", JSON.stringify(subFolderList));
             } else {
-                leftMassageDiv.innerHTML = "";
-                leftMassageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
+                massageDiv.innerHTML = "";
+                massageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
             }
 
             if (subFolderList.length === 0) {
@@ -126,8 +124,8 @@
                         if (req.status === 200) {
                           self.update(JSON.parse(req.responseText)); // self visible by
                         } else {
-                            rightMassageDiv.innerHTML = "";
-                            rightMassageDiv.textContent = message;
+                            massageDiv.innerHTML = "";
+                            massageDiv.textContent = message;
                         }
                       }
               });
@@ -136,12 +134,12 @@
         this.update = function(documentList){
 
             rightDocumentDiv.innerHTML="";
-            rightMassageDiv.innerHTML="";
+            // massageDiv.innerHTML="";
             detailsDiv.innerHTML="";
 
             if (documentList.length === 0) {
-                rightMassageDiv.style.visibility = "visible";
-                rightMassageDiv.textContent = "No document yet!";
+                massageDiv.style.visibility = "visible";
+                massageDiv.textContent = "No document yet!";
             } else {
                 sessionStorage.setItem("documentList", JSON.stringify(documentList)); //for details
                 rightDocumentDiv.style.visibility = "visible";
@@ -206,7 +204,7 @@
 
         this.refresh = function() {
             rightDocumentDiv.style.visibility = "hidden";
-            rightMassageDiv.style.visibility = "hidden";
+            massageDiv.style.visibility = "hidden";
         }
     }
 
@@ -258,8 +256,8 @@
                 self.update(fromDocumentName, fromSubFolderName, fromFolderName, subFolderList);
 
             } else {
-                leftMassageDiv.innerHTML = "";
-                leftMassageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
+                massageDiv.innerHTML = "";
+                massageDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
             }
         }
 
@@ -267,7 +265,7 @@
         this.update = function (fromDocumentName, fromSubFolderName, fromFolderName, subFolderList) {
 
             leftFolderDiv.innerHTML="";
-            leftMassageDiv.innerHTML="";
+            massageDiv.innerHTML="";
 
             subFolderList.forEach(list => {
                 var row = document.createElement("p");
@@ -366,8 +364,8 @@
                             self.update();
 
                         } else {
-                            rightMassageDiv.innerHTML = "";
-                            rightMassageDiv.textContent = message;
+                            massageDiv.innerHTML = "";
+                            massageDiv.textContent = message;
                         }
                     }
                 }
@@ -375,8 +373,8 @@
         }
 
         this.update = function (){
-            rightMassageDiv.innerHTML = "";
-            rightMassageDiv.textContent = "Sposta successful!!!"
+            massageDiv.innerHTML = "";
+            massageDiv.textContent = "Sposta successful!!!"
         }
 
         this.refresh = function (toSubFolderName,toFolderNameOfSubFolder){
@@ -398,8 +396,8 @@
                             self.refresh(subFolderName, folderName)
                             self.update();
                         } else {
-                            rightMassageDiv.innerHTML = "";
-                            rightMassageDiv.textContent = message;
+                            massageDiv.innerHTML = "";
+                            massageDiv.textContent = message;
                         }
                     }
                 }
@@ -407,8 +405,8 @@
         }
 
         this.update = function (){
-            rightMassageDiv.innerHTML = "";
-            rightMassageDiv.textContent = "Remove successful!!!"
+            massageDiv.innerHTML = "";
+            massageDiv.textContent = "Remove successful!!!"
         }
 
         this.refresh = function (subFolderName, folderName){

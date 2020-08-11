@@ -18,7 +18,7 @@
     var re = new RegExp("^(\\S+)\\@(\\S+).(\\S+)$");
     if(!re.test(email)){
       document.getElementById("errormessage").textContent =
-          "The syntactic of the email address is not valid.";
+          "Notice from client side: The syntactic of the email address is not valid.";
       return;
     }
 
