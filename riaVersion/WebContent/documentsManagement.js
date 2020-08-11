@@ -1,13 +1,16 @@
 (function(){
 
     var leftFolderDiv = document.getElementById("leftFolderDiv");
-    var leftTrashDiv = document.getElementById("leftTrashDiv");
+
     var rightDocumentDiv = document.getElementById("rightDocumentDiv");
     var massageDiv = document.getElementById("MassageDiv");
     var detailsDiv =  document.getElementById("detailsDiv");
+
+    var leftTrashDiv = document.getElementById("leftTrashDiv");
     var trashIcon = document.getElementById("trash");
 
     var username =  document.getElementById("username")
+    
     var pageOrchestrator = new PageOrchestrator();
 
     var folderAndSubFolder;
