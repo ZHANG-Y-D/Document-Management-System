@@ -1,0 +1,48 @@
+body{
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    grid-template-rows: 100px auto 100px;
+    grid-template-areas: 'p1 p1 p2'
+                         'p3 p4 p5'
+                         'p6 . p7';
+}
+
+
+
+.p1{
+   background: lightpink;
+    grid-area: p1;
+}
+
+.p2 {
+    background: green;
+    grid-area: p2;
+}
+
+.p3{
+    background: lightblue;
+    grid-area: p3;
+
+}
+
+.p4{
+    background: coral;
+    grid-area: p4;
+
+}
+
+.p5{
+    background: yellow;
+    grid-area: p5;
+
+}
+
+.p6{
+    background: red;
+    grid-area: p6;
+}
+
+.p7{
+    background: wheat;
+    grid-area: p7;
+}

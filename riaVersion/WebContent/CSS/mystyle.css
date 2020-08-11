@@ -1,14 +1,46 @@
-.block{
- float: left;
-  width: 33.33%;
-  padding: 15px;
+
+body {
+  display: grid;
+  background-color: white;
+  grid-template-columns:33.33% 33.33% 33.33%;
+  grid-template-rows: 150px auto 150px;
+  grid-template-areas: 'a a b'
+                       'c d e'
+                       'f . g';
 }
 
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
+
+h1{
+  grid-area: a;
 }
+
+.userinfoBlock{
+
+  grid-area: b;
+}
+
+.FolderBlock{
+  grid-area: c;
+
+}
+
+.DocumentBlock{
+  grid-area: d;
+
+}
+
+.DetailsBlock{
+  grid-area: e;
+}
+
+.TrashBlock{
+  grid-area: f;
+}
+
+.MassageDiv{
+  grid-area: g;
+}
+
 
 @media screen and (max-width:600px) {
   .column {

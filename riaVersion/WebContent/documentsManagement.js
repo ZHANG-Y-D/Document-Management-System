@@ -28,8 +28,8 @@
 
 
 
-// TODO CSS
-// TODO logout
+// TODO tag rebuild.(message tag)
+// TODO Style
 
 
     function PageOrchestrator(){
@@ -79,7 +79,9 @@
 
 
         this.update = function (subFolderList) {
-            leftFolderDiv.innerHTML =""; //TODO
+
+            leftFolderDiv.innerHTML ="";
+            leftTrashDiv.innerHTML ="";
             trashIcon.style.visibility = "hidden";
 
             // Check browser support
@@ -439,6 +441,7 @@
         }
 
         this.refresh = function (toSubFolderName,toFolderNameOfSubFolder){
+
             documentsList.show(toSubFolderName,toFolderNameOfSubFolder);
             folderAndSubFolder.show();
         }

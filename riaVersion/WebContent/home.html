@@ -8,47 +8,31 @@
 </head>
 
 <body>
+	<h1>Welcome to the documents' management</h1>
 
-    <div align="right">
-		<p>User: 
+	<div class="userinfoBlock" align="right">
+		<p>User:
 			<span style="text-decoration:underline;" id=username></span>
 			<a class="button" type="button" href="Logout">Logout</a>
 		</p>
 	</div>
-	
-	
-	<h1>Welcome to the documents' management</h1>
-	
-	
 
-   <div   id=MassageDiv> </div>
-	
-	<div class="row">
+    <div class="MassageDiv"  id=MassageDiv> </div>
+	<div class="FolderBlock" id=leftFolderDiv></div>
+	<div class="DocumentBlock" id=rightDocumentDiv draggable="true"></div>
+	<div class="DetailsBlock" id=detailsDiv></div>
 
-	    <div class="block" id=leftFolderDiv>
-	    	 
-	     </div>
-	    <div class="block" id=rightDocumentDiv draggable="true"></div>
-	    <div class="block" id=detailsDiv>
-	    	
-	    	
-	    </div>
 
-   </div>
-      <div id=leftTrashDiv></div>
-	            <div id=trash class="icon-trash" style="float: left" >
-                <div class="trash-lid" style="background-color: #2CC3B5"></div>
-                <div class="trash-container" style="background-color: #2CC3B5"></div>
-                <div class="trash-line-1"></div>
-                <div class="trash-line-2"></div>
-                <div class="trash-line-3"></div>
-      </div>
-   
-   
-   
-   
-  
-   
+	<div class="TrashBlock">
+		<div id=leftTrashDiv></div>
+		<div id=trash class="icon-trash">
+			<div class="trash-lid" style="background-color: #2CC3B5"></div>
+			<div class="trash-container" style="background-color: #2CC3B5"></div>
+			<div class="trash-line-1"></div>
+			<div class="trash-line-2"></div>
+			<div class="trash-line-3"></div>
+		</div>
+	</div>
 
 </body>
 
