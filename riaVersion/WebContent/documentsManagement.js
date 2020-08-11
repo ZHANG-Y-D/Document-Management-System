@@ -5,7 +5,7 @@
     var rightDocumentDiv = document.getElementById("rightDocumentDiv");
     var massageDiv = document.getElementById("MassageDiv");
     var detailsDiv =  document.getElementById("detailsDiv");
-    
+
     var username =  document.getElementById("username")
     var pageOrchestrator = new PageOrchestrator();
 
