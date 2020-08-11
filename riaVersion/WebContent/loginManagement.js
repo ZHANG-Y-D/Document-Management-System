@@ -9,7 +9,7 @@
     if (form.checkValidity()) {
       makeCall("POST", 'CheckLogin', e.target.closest("form"),
         function(req) {
-          if (req.readyState == XMLHttpRequest.DONE) {
+          if (req.readyState === XMLHttpRequest.DONE) {
             var message = req.responseText;
             switch (req.status) {
               case 200:
