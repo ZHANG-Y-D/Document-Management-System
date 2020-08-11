@@ -8,7 +8,8 @@
     var rightSubFolderDiv = document.getElementById("rightSubFolderDiv");
     var rightDocumentDiv = document.getElementById("rightDocumentDiv");
     var rightMassageDiv = document.getElementById("rightMassageDiv");
-    var pageOrchestrator = new PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+    var detailsDiv =  document.getElementById("detailsDiv");
+    var pageOrchestrator = new PageOrchestrator(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv,detailsDiv);
 
 
     window.addEventListener("load", () => {
@@ -18,9 +19,10 @@
 
 })();
 
+
 // TODO accedi
+
 // TODO CSS
-//TODO html
 // TODO PageOrchestrator
 // TODO logout
 // TODO refresh sposta
@@ -103,7 +105,7 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
                     anchor.addEventListener("click", (e) => {
                         // dependency via module parameter
 
-                        var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+                        var documentsList = new DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv,detailsDiv);
 
                         documentsList.show(e.target.getAttribute("subFolderName"), e.target.getAttribute("folderNameOfSubFolder")); // the list must know the details container
                     }, false);
@@ -114,7 +116,7 @@ function FolderAndSubFolder(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,right
     }
 }
 
-function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv){
+function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv,detailsDiv){
     var self = this;
     this.show = function (subFolderName,folderNameOfSubFolder) {
         makeCall("GET", "GetListDocuments?subFolderName=" + subFolderName+"&folderName="+folderNameOfSubFolder, null,
@@ -135,11 +137,13 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
         rightSubFolderDiv.innerHTML="";
         rightDocumentDiv.innerHTML="";
         rightMassageDiv.innerHTML="";
+        detailsDiv.innerHTML="";
 
         if (documentList.length === 0) {
             rightMassageDiv.style.visibility = "visible";
             rightMassageDiv.textContent = "No document yet!";
         } else {
+            sessionStorage.setItem("documentList", JSON.stringify(documentList)); //for details
             rightDocumentDiv.style.visibility = "visible";
             var p = document.createElement("p");
             p.textContent = documentList[0].subFolderNameOfDocument;
@@ -157,7 +161,7 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
                 anchorSposta.setAttribute('fromSubFolderName', d.subFolderNameOfDocument);
                 anchorSposta.setAttribute('fromFolderName', d.folderNameOfDocument);
 
-                var choicesList = new ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv);
+                var choicesList = new ChoicesList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocumentDiv,rightMassageDiv,leftTrashDiv,detailsDiv);
 
                 anchorSposta.addEventListener("click", (e) => {
                     // dependency via module parameter
@@ -177,10 +181,23 @@ function DocumentsList(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocum
 
                 }, false);
 
+                var anchorAccedi = document.createElement("a");
+                anchorAccedi.textContent = ">accedi";
+                anchorAccedi.setAttribute('selectedDocument', d.documentName);
+
+                var detailsDocument = new DetailsDocument(detailsDiv)
+                anchorAccedi.addEventListener("click", (e) => {
+                    // dependency via module parameter
+                    detailsDocument.show(e.target.getAttribute("selectedDocument")); // the list must know the details container
+                }, false);
+
                 li.appendChild(documentCell);
-                li.appendChild(documentText);
-                li.appendChild(anchorSposta);
+                documentCell.appendChild(documentText);
+                documentCell.appendChild(anchorAccedi);
+                documentCell.appendChild(anchorSposta);
                 anchorSposta.href = "#";
+                anchorAccedi.href = "#";
+
             });
         }
     }
@@ -364,4 +381,41 @@ function ToDoSposta(leftFolderDiv,leftMassageDiv,rightSubFolderDiv,rightDocument
 
 }
 
+function DetailsDocument(detailsDiv){
+   //this.detailsDiv = detailsDiv;
 
+    this.show=  function(selectedDocument){
+
+        if (typeof (Storage) !== "undefined") {
+            var documents = JSON.parse(sessionStorage.getItem("documentList"));
+
+            documents.forEach(d => {
+                if(d.documentName === selectedDocument){
+                    //detailsDiv.style.visibility = "visible";
+                    detailsDiv.innerHTML="";
+                    var rowName = document.createElement("p");
+                    rowName.textContent = d.documentName;
+                    var rowDate = document.createElement("p");
+                    rowDate.textContent = d.dateOfDocument;
+                    var rowSummary = document.createElement("p");
+                    rowSummary.textContent = d.summary;
+                    var rowType = document.createElement("p");
+                    rowType.textContent = d.type;
+
+                    detailsDiv.appendChild(rowName);
+                    detailsDiv.appendChild(rowDate);
+                    detailsDiv.appendChild(rowSummary);
+                    detailsDiv.appendChild(rowType);
+
+
+                }
+
+            });
+
+        } else {
+        	detailsDiv.innerHTML = "Sorry, your browser does not support Web Storage...";
+        }
+    }
+
+
+}
