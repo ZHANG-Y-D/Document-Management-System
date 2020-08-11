@@ -10,7 +10,7 @@
     var trashIcon = document.getElementById("trash");
 
     var username =  document.getElementById("username")
-    
+
     var pageOrchestrator = new PageOrchestrator();
 
     var folderAndSubFolder;
@@ -79,7 +79,7 @@
 
 
         this.update = function (subFolderList) {
-            leftFolderDiv.innerHTML ="";
+            leftFolderDiv.innerHTML =""; //TODO
             trashIcon.style.visibility = "hidden";
 
             // Check browser support
