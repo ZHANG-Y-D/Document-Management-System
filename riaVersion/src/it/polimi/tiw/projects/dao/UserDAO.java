@@ -25,7 +25,6 @@ public class UserDAO {
 				else {
 					result.next();
 					User user = new User();
-					user.setId(result.getInt("id"));
 					user.setUsername(result.getString("username"));
 					user.setEmail(result.getString("email"));
 					return user;
@@ -35,7 +34,7 @@ public class UserDAO {
 	}
 	
 	public String insertForRegister(String usrn, String pwd, String email) throws SQLException {
-		String query = "INSERT INTO user(id,username,password,email) VALUES(NULL,?,?,?);";
+		String query = "INSERT INTO User VALUES(?,?,?);";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, usrn);
 			pstatement.setString(2, pwd);

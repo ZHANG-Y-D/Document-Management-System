@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<title>Documents' management</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
-<body>
-        <h1>Welcome to the documents' management</h1>
-        
-        <div th:each="folder : ${folders}">
-                <p th:text= ${folder.FolderName}>folder</p>
-                        <ul th:each="subfolder:${fsubfolders.get(folder)}" >
-					         <li ><a href="documents.html"
-					         	th:href="@{/GetListDocuments(SubFolderName=${subfolder.SubFolderName},FolderName=${subfolder.FolderName})}"><span th:text= ${subfolder.SubFolderName}> subFolder</span></a></li>
-					    </ul>
-                                
-        </div>
-</body>
+	<head>
+		<title>Documents' management</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	</head>
+
+	<body>
+		<h1>Welcome to the documents' management</h1>
+		<div th:each="folder : ${folders}">
+			<p th:text= ${folder.FolderName}>folder</p>
+			<ul th:each="subfolder:${fsubfolders.get(folder)}" >
+				<li >
+					<a href="documents.html" th:href="@{/GetListDocuments(SubFolderName=${subfolder.SubFolderName},FolderName=${subfolder.FolderName})}">
+						<span th:text= ${subfolder.SubFolderName}>subFolder</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</body>
 </html>

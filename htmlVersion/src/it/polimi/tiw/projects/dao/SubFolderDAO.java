@@ -55,40 +55,40 @@ public class SubFolderDAO {
 		return sfolders;
 	}
 	
-	public SubFolder findSubFolderBySubFoldAndFolderName(String subFolderName, String folderName) throws SQLException{
-		
-		SubFolder sf= new SubFolder();
-		String query = "SELECT * FROM SubFolder where SubFolderName = ? and FolderName = ?";
-		ResultSet result = null;
-		PreparedStatement pstatement = null;
-		
-		try {
-			pstatement = con.prepareStatement(query);
-			pstatement.setString(1, subFolderName);
-			pstatement.setString(2, folderName);
-			result = pstatement.executeQuery();
-			while (result.next()) {
-				sf.setSubFolderName(result.getString("SubFolderName"));
-				sf.setFolderName(result.getString("FolderName"));
-				sf.setDate(result.getDate("Date"));	
-			}
-		} catch (SQLException e) {
-			throw new SQLException(e);
-
-		} finally {
-			try {
-				result.close();
-			} catch (Exception e1) {
-				throw new SQLException("Cannot close result");
-			}
-			try {
-				pstatement.close();
-			} catch (Exception e1) {
-				throw new SQLException("Cannot close statement");
-			}
-		}
-		
-		return sf;
-	}
+//	public SubFolder findSubFolderBySubFoldAndFolderName(String subFolderName, String folderName) throws SQLException{
+//		
+//		SubFolder sf= new SubFolder();
+//		String query = "SELECT * FROM SubFolder where SubFolderName = ? and FolderName = ?";
+//		ResultSet result = null;
+//		PreparedStatement pstatement = null;
+//		
+//		try {
+//			pstatement = con.prepareStatement(query);
+//			pstatement.setString(1, subFolderName);
+//			pstatement.setString(2, folderName);
+//			result = pstatement.executeQuery();
+//			while (result.next()) {
+//				sf.setSubFolderName(result.getString("SubFolderName"));
+//				sf.setFolderName(result.getString("FolderName"));
+//				sf.setDate(result.getDate("Date"));	
+//			}
+//		} catch (SQLException e) {
+//			throw new SQLException(e);
+//
+//		} finally {
+//			try {
+//				result.close();
+//			} catch (Exception e1) {
+//				throw new SQLException("Cannot close result");
+//			}
+//			try {
+//				pstatement.close();
+//			} catch (Exception e1) {
+//				throw new SQLException("Cannot close statement");
+//			}
+//		}
+//		
+//		return sf;
+//	}
 
 }

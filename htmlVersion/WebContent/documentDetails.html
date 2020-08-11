@@ -6,27 +6,13 @@
 </head>
 <body>
         <h1>Document' details</h1>
-        
-        
+
                 <p th:text= ${document.DocumentName}> document</p>
                 <p th:text= ${document.Date}> document</p>
                 <p th:text= ${document.Summary}> document</p> 
                 <p th:text= ${document.Type}> document</p>   
                 
-                
-                <!--  <ul th:each="document : ${documents}" >
-							 <li> <span th:text= ${document.DocumentName}>document</span> 
-							 	 
-							 </li>
-					     
-					    </ul> -->
-                
-          
-						 
-       		
-             
-						 
-					     
-					     
+				<a th:href="@{/GetFoldersAndSubFolders}">Go to home page</a>
+
 </body>
 </html>

@@ -63,10 +63,7 @@ public class GetChoices extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		
-//		String fromDocumentName = req.getParameter("FromDocumentName");
-//		String fromSubFolderName = req.getParameter("FromSubFolderName");
-//		String fromFolderName = req.getParameter("FromFolderName"); 
-		
+
 		HttpSession session = req.getSession(); 
 		
 		String fromDocumentName = (String) session.getAttribute("FromDocumentName");
@@ -81,7 +78,6 @@ public class GetChoices extends HttpServlet {
 				fromSubFolderName != null &&
 						fromFolderName != null) {
 			DocumentDAO dDao = new DocumentDAO(connection);
-			SubFolderDAO fDao = new SubFolderDAO(connection);
 		
 			try {
 				List<String> fromDocument = new ArrayList<String>();
@@ -104,13 +100,12 @@ public class GetChoices extends HttpServlet {
 				}
 				
 				dDao.moveDocument(fromDocument, toSubFolder);
-				SubFolder subFolder = fDao.findSubFolderBySubFoldAndFolderName(toSubFolderName, toFolderName);
 				List<Document> documents = dDao.findAllDocumentsBySubFolderAndFolderName(toSubFolderName, toFolderName);
 				String path = "documents.html";
 				ServletContext servletContext = getServletContext();
 				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 				ctx.setVariable("documents", documents);
-				ctx.setVariable("subfolder", subFolder);
+				ctx.setVariable("subfolder", toSubFolderName); 
 				templateEngine.process(path, ctx, res.getWriter());
 				
 				session.removeAttribute("FromDocumentName");

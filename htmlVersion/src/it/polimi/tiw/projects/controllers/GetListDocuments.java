@@ -69,12 +69,9 @@ public class GetListDocuments extends HttpServlet{
 		
 		if (subfolderName != null) {
 			DocumentDAO dDao = new DocumentDAO(connection);
-			SubFolderDAO fDao = new SubFolderDAO(connection);
 			try {
-				SubFolder subfolder;
 				List<Document> documents;
 				
-				subfolder = fDao.findSubFolderBySubFoldAndFolderName(subfolderName,folderName);
 			    documents = dDao.findAllDocumentsBySubFolderAndFolderName(subfolderName,folderName);
 			    
 			    session.setAttribute("lastDocuments", documents);
@@ -83,9 +80,8 @@ public class GetListDocuments extends HttpServlet{
 				ServletContext servletContext = getServletContext();
 				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 				ctx.setVariable("documents", documents);
-				ctx.setVariable("subfolder", subfolder);
+				ctx.setVariable("subfolder", subfolderName);
 				templateEngine.process(path, ctx, res.getWriter());
-
 			} catch (
 			SQLException e) {
 				res.sendError(500, "Database access failed");

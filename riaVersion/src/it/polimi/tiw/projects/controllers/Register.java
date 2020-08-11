@@ -70,8 +70,8 @@ public class Register extends HttpServlet {
 				if (resultString.contains("Duplicate")) { 
 					// Duplicate entry. The user name has been registered.
 					response.getWriter().println("The user name has been registered.");
-				}else if(resultString.contains("mailchck")){
-					// Check constraint 'mailchck' is violated,
+				}else if(resultString.contains("mailcheck")){
+					// Check constraint 'mailcheck' is violated,
 					// So the syntactic of the email address is not valid.
 					response.getWriter().println("The syntactic of the email address is not valid.");
 				}else {

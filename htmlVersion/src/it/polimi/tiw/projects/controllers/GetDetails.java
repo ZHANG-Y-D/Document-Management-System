@@ -77,11 +77,10 @@ public class GetDetails extends HttpServlet{
 				final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 				
 				for(Document d : documents) {
-					if(d.getDocumentName()  == documentName) {
+					if(d.getDocumentName().equals(documentName)) {
 						ctx.setVariable("document", d);
 						break;
 					}
-					
 				}
 				//ctx.setVariable("documents", documents);
 				String path = "documentDetails.html";

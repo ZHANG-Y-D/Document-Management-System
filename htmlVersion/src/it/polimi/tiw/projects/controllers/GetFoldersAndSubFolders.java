@@ -82,9 +82,12 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 			final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
 			
 			
-
-			HttpSession session = req.getSession(true); // if session does not exist, create one 
-			if (session.isNew()) {
+			HttpSession session = req.getSession(); 
+			
+			// if session does not exist, create one 
+			if (session.isNew() || 
+					session.getAttribute("folders") == null || 
+					session.getAttribute("folderAndSubFolders") == null) {
 			       
 			       folders = fDao.findAllFolders();
 				
@@ -95,17 +98,19 @@ public class GetFoldersAndSubFolders extends HttpServlet{
 				   
 				   session.setAttribute("folders", folders);
 				   session.setAttribute("folderAndSubFolders", folderAndSubFolders);
+				   
 				   ctx.setVariable("fsubfolders", folderAndSubFolders);
 				   path = "home.html";
 				   
-		    } else // session already existing
-			       { 	
+		    } else { 	
+		    		// session already existing
 					folders = (List<Folder>) session.getAttribute("folders");
 					Map <Folder, List<SubFolder>> folderAndSubfolders = (Map<Folder, List<SubFolder>>) session.getAttribute("folderAndSubFolders");
 					
 					ctx.setVariable("fsubfolders", folderAndSubfolders);
 					if(documentName == null ||subFolderName == null ||folderName == null) path = "home.html";
-					else { //show folders to move
+					else { 
+						//show folders to move
 						DocumentDAO dDao = new DocumentDAO(connection);
 						Document document = dDao.findDocument(documentName, subFolderName, folderName);
 						

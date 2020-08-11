@@ -55,6 +55,7 @@ public class GetListDocuments extends HttpServlet{
 				documents = dDao.findAllDocumentsBySubFolderAndFolderName(subFolderName, folderName);
 				
 			} catch (SQLException e) {
+				
 				e.printStackTrace();
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.getWriter().println("Not possible to recover missions");

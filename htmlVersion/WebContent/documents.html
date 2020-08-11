@@ -8,7 +8,7 @@
         <h1>Document's page</h1>
         
        
-                <p th:text= ${subfolder.SubFolderName}> subFolder</p>
+                <p th:text= ${subfolder}> subFolder</p>
                         <ul th:each="document : ${documents}" >
 							 <li> <span th:text= ${document.DocumentName}>document</span> 
 							 	   <a th:href="@{/GetDetails(DocumentName=${document.DocumentName},SubFolderName=${document.SubFolderName},FolderName=${document.FolderName})}"> >accedi </a>
@@ -16,7 +16,7 @@
 							 </li>
 					     
 					    </ul>
-					    <a th:href="@{/GetFoldersAndSubFolders}">Go folders</a>
+					    <a th:href="@{/GetFoldersAndSubFolders}">Go to home page</a>
 					    
                                 
       
