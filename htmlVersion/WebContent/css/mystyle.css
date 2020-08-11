@@ -1,0 +1,127 @@
+.folder {
+    width: 30px;
+    height: 20px;
+    display: inline-block;
+    margin: auto;
+    position: relative;
+    background-color: #edce32;
+    border-radius: 0 3px 3px 3px;
+    /*box-shadow: 4px 4px 7px rgba(0, 0, 0, 0.59);*/
+    margin-bottom: -8px;
+    margin-top: 12px;
+  }
+
+  .folder:before {
+    content: '';
+    width: 50%;
+    height: 0.2em;
+    border-radius: 0 20px 0 0;
+    background-color: #edce32;;
+    position: absolute;
+    top: -0.2em;
+    left: 0px;
+  }
+  
+  .folderName{
+  	padding-left: 1%;
+    font-weight: bold;
+  }
+  
+  ul{
+   list-style-type: none;
+  }
+  
+  a.folderButton:link{
+      text-decoration: none;
+      margin-left: 2%;
+      color: black;
+  }
+  
+  a.folderButton:hover{
+    text-decoration: underline;
+  	color: blue;
+  }
+  
+  a.folderButton:visited{
+  	color: black;
+  }
+  
+  #originSubfolder{
+  	color: grey;
+  	padding-left: 2%;
+  }
+  
+  .movingDocument{
+  	color: blue;
+  	font-style: italic
+  	
+  	
+  }
+  
+  
+  .file {
+    background:#eee;
+    background:-moz-linear-gradient(top, #ddd 0, #eee 15%, #fff 40%, #fff 70%, #eee 100%);
+    background:-webkit-linear-gradient(top, #ddd 0, #eee 15%, #fff 40%, #fff 70%, #eee 100%);
+    border:1px solid #ccc;
+    -moz-border-radius:3px 15px 3px 3px;
+    -webkit-border-radius:3px 15px 3px 3px;
+    border-radius:3px 15px 3px 3px;
+    -moz-box-shadow:inset rgba(255,255,255,0.8) 0 1px 1px;
+    -webkit-box-shadow:inset rgba(255,255,255,0.8) 0 1px 1px;
+    box-shadow:inset rgba(255,255,255,0.8) 0 1px 1px;
+    display: inline-block;
+    width: 20px;
+    height: 25px;
+    position:relative;
+    text-indent:-9999em;
+    margin-bottom: -8px;
+    margin-top: 12px;
+  }
+  .file:before {
+    content: '';
+    position: absolute;
+    right:0;
+    width: 10px;
+    height: 10px;
+    background:#ccc;
+    background:-moz-linear-gradient(45deg, #fff 0,  #eee 50%, #ccc 100%);
+    background:-webkit-linear-gradient(45deg, #fff 0,  #eee 50%, #ccc 100%);
+    box-shadow:rgba(0,0,0,0.05) -1px 1px 1px, inset white 0 0 1px;
+    border-bottom:1px solid #ccc;
+    border-left:1px solid #ccc;
+    -moz-border-radius:0 14px 0 0;
+    -webkit-border-radius:0 14px 0 0;
+    border-radius:0 10px 0 0;
+  }
+
+  .file:after {
+    content:"";
+    display:block;
+    position:absolute;
+    left:0;
+    top:0;
+    width: 40%;
+    margin: 10px 20% 0;
+    background:#ccc;
+    background:-moz-linear-gradient(top, #ccc 0, #ccc 20%, #fff 20%, #fff 40%, #ccc 40%, #ccc 60%, #fff 60%, #fff 80%, #ccc 80%, #ccc 100%);
+    background:-webkit-linear-gradient(top, #ccc 0, #ccc 20%, #fff 20%, #fff 40%, #ccc 40%, #ccc 60%, #fff 60%, #fff 80%, #ccc 80%, #ccc 100%);
+    height: 8px;
+  }
+  
+  .button{
+  	background-color: #0000004f;
+    color: white;
+    padding: 0.2% 0.2% 0.2% 0.2%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 4px 4px 4px 4px;
+    margin-left: 0.5%
+    
+    
+  }
+
+  div.details p {
+  	 font-weight: bold;
+  }

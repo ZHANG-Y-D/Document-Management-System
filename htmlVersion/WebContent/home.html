@@ -3,15 +3,17 @@
 	<head>
 		<title>Documents' management</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="all"
+	href="css/mystyle.css" th:href="@{/css/mystyle.css}" />
 	</head>
 
 	<body>
 		<h1>Welcome to the documents' management</h1>
 		<div th:each="folder : ${folders}">
-			<p th:text= ${folder.FolderName}>folder</p>
+			<span><div class="folder"></div></span><span class = "folderName" th:text= ${folder.FolderName}>folder</span>
 			<ul th:each="subfolder:${fsubfolders.get(folder)}" >
 				<li >
-					<a href="documents.html" th:href="@{/GetListDocuments(SubFolderName=${subfolder.SubFolderName},FolderName=${subfolder.FolderName})}">
+					<a class="folderButton" href="documents.html" th:href="@{/GetListDocuments(SubFolderName=${subfolder.SubFolderName},FolderName=${subfolder.FolderName})}">
 						<span th:text= ${subfolder.SubFolderName}>subFolder</span>
 					</a>
 				</li>

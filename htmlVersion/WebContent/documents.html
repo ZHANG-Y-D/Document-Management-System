@@ -3,20 +3,25 @@
 <head>
 <title>Documents</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" media="all"
+	href="css/mystyle.css" th:href="@{/css/mystyle.css}" />
+	
 </head>
 <body>
         <h1>Document's page</h1>
         
        
-                <p th:text= ${subfolder}> subFolder</p>
+                <span><div class="folder"></div></span><span class = "folderName" th:text= ${subfolder}> subFolder</span>
                         <ul th:each="document : ${documents}" >
-							 <li> <span th:text= ${document.DocumentName}>document</span> 
-							 	   <a th:href="@{/GetDetails(DocumentName=${document.DocumentName},SubFolderName=${document.SubFolderName},FolderName=${document.FolderName})}"> >accedi </a>
-							      <a th:href="@{/GetFoldersAndSubFolders(DocumentName=${document.DocumentName},SubFolderName=${document.SubFolderName},FolderName=${document.FolderName})}">   >sposta </a>
+							 <li><span><div class="file"></div></span><span class = "folderName" th:text= ${document.DocumentName}>document</span> 
+							 	   <a class="button" th:href="@{/GetDetails(DocumentName=${document.DocumentName},SubFolderName=${document.SubFolderName},FolderName=${document.FolderName})}">accedi </a>
+							      <a  class="button" th:href="@{/GetFoldersAndSubFolders(DocumentName=${document.DocumentName},SubFolderName=${document.SubFolderName},FolderName=${document.FolderName})}">sposta </a>
 							 </li>
 					     
 					    </ul>
-					    <a th:href="@{/GetFoldersAndSubFolders}">Go to home page</a>
+					    
+					    <div><a  class="button" th:href="@{/GetFoldersAndSubFolders}">Go to home page</a></div>
+					    
 					    
                                 
       

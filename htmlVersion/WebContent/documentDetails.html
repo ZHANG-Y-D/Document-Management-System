@@ -3,16 +3,21 @@
 <head>
 <title>Document details</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" media="all"
+	href="css/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
         <h1>Document' details</h1>
-
-                <p th:text= ${document.DocumentName}> document</p>
-                <p th:text= ${document.Date}> document</p>
-                <p th:text= ${document.Summary}> document</p> 
-                <p th:text= ${document.Type}> document</p>   
+               <div class="details" >
+               <p>Nome: <span th:text= ${document.DocumentName}> document</span></p>
+               <p>Data: <span th:text= ${document.Date}> document</span></p>
+               <p>Sommario: <span th:text= ${document.Summary}> document</span></p> 
+               <p>Tipo: <span th:text= ${document.Type}> document</span></p>   
                 
-				<a th:href="@{/GetFoldersAndSubFolders}">Go to home page</a>
-
+                </div>
+                
+                <div><a class= "button" th:href="@{/GetFoldersAndSubFolders}">Go to home page</a></div>
 </body>
 </html>
+
+

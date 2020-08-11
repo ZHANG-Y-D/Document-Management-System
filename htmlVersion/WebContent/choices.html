@@ -3,15 +3,16 @@
 	<head>
 		<title>choices page</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" media="all"href="css/mystyle.css" th:href="@{/css/mystyle.css}" />
 	</head>
 	<body>
 
-		<h1>Stai spostando il documento <span th:text=${document.DocumentName}>X</span> dalla sottocartella <span th:text=${document.subFolderName}>Y</span>. Scegli la sottocartella di destinazione</h1>
+		<h1>Stai spostando il documento <span class="movingDocument" th:text=${document.DocumentName}>X</span> dalla sottocartella <span class="movingDocument"  th:text=${document.subFolderName}>Y</span>. Scegli la sottocartella di destinazione</h1>
 		<div th:each="folder : ${folders}">
-			<p th:text= ${folder.FolderName}>folder</p>
+			<span><div class="folder"></div></span><span class = "folderName" th:text= ${folder.FolderName}>folder</span>
 			<ul th:each="subfolder:${fsubfolders.get(folder)}"  >
 				<li th:if="${subfolder.subFolderName == document.subfolderName && folder.FolderName == document.FolderName}">
-					<span th:text= ${subfolder.SubFolderName}> subFolder</span>
+					<span id="originSubfolder" th:text= ${subfolder.SubFolderName}> subFolder</span>
 				</li>
 				<li th:unless="${subfolder.subFolderName == document.subfolderName && folder.FolderName == document.FolderName}">
 					<a th:href="@{/GetChoices(ToSubFolderName=${subfolder.subFolderName},ToFolderName=${folder.FolderName})}">
