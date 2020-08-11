@@ -2,37 +2,33 @@
 <head>
 <title>Documents management</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css" />
 <script src="utils.js" charset="utf-8" defer></script>
 <script src="documentsManagement.js" charset="utf-8" defer></script>
 </head>
 
 <body>
-	<h1>Welcome to the documents' management</h1>
 
-	<div align="right">
+    <div align="right">
 		<p>User: 
 			<span style="text-decoration:underline;" id=username></span>
 			<a type="button" href="Logout">Logout</a>
 		</p>
-
-
 	</div>
-
-
-
-
-	<div style="float: left;" id=leftFolderDiv> </div>
-
-	<div style="float: left;" id=leftTrashDiv></div>
-
-	<div style="float: right;" id=rightDocumentDiv draggable="true"> </div>
-
-	<div style="float: right;" id=MassageDiv> </div>
 	
+	<h1>Welcome to the documents' management</h1>
+	
+	<div>
 
-	<div id=detailsDiv></div>
+	    <div class="block"  id=leftFolderDiv> </div>
+	    <div  class="block"    id=rightDocumentDiv draggable="true"></div>
+	    <div class="block" id=detailsDiv></div>
 
-
+   </div>
+   
+   <div id=leftTrashDiv></div>
+   <div   id=MassageDiv> </div>
+   
 
 </body>
 
