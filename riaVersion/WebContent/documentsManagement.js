@@ -369,6 +369,7 @@
                 });
             });
 
+            leftTrashDiv.innerHTML="";
             leftTrashDiv.style.visibility = "visible";
             var trash = document.createElement("p");
 
