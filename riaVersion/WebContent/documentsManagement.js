@@ -77,6 +77,7 @@
 
         this.update = function (subFolderList) {
             leftFolderDiv.innerHTML ="";
+            leftTrashDiv.innerHTML ="";
             trashIcon.style.visibility = "hidden";
 
             // Check browser support
@@ -436,6 +437,7 @@
         }
 
         this.refresh = function (toSubFolderName,toFolderNameOfSubFolder){
+
             documentsList.show(toSubFolderName,toFolderNameOfSubFolder);
             folderAndSubFolder.show();
         }
