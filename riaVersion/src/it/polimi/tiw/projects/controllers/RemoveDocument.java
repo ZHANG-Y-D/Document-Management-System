@@ -62,5 +62,4 @@ public class RemoveDocument extends HttpServlet {
 			response.getWriter().println("Bad topic ID");
 		}
 	}
-
 }

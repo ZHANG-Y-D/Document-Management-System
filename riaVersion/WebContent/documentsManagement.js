@@ -39,7 +39,7 @@
             moveDocuToTrash = new RemoveDocuToTrash();
             toDoSposta = new ToDoSposta();
             choicesList = new ChoicesList();
-            detailsDocument = new DetailsDocument()
+            detailsDocument = new DetailsDocument();
             documentsList = new DocumentsList();
             folderAndSubFolder = new FolderAndSubFolder();
             folderAndSubFolder.show();
